@@ -23,7 +23,7 @@ public class PiecePanel extends JPanel {
         int width = getWidth();
         int height = getHeight();
 
-        double circleSizePercentage = 0.8;
+        double circleSizePercentage = 0.93;
         int circleSize = (int) (Math.min(width, height) * circleSizePercentage);
 
         int xOffset = (width - circleSize) / 2;

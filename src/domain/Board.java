@@ -16,6 +16,7 @@ public class Board {
                 boardState[i][j] = 0;
             }
         }
+        printBoard();
     }
 
     public void resetBoard() {
@@ -34,7 +35,7 @@ public class Board {
 
     public int checkWinner() {
         for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < 11; j++) {
+            for (int j = 0; j < boardSize-4; j++) {
                 if (boardState[i][j] != 0 &&
                         boardState[i][j] == boardState[i][j + 1] &&
                         boardState[i][j] == boardState[i][j + 2] &&
@@ -46,7 +47,7 @@ public class Board {
         }
 
         // Implementa la lógica para verificar las columnas
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < boardSize-4; i++) {
             for (int j = 0; j < boardSize; j++) {
                 if (boardState[i][j] != 0 &&
                         boardState[i][j] == boardState[i + 1][j] &&
@@ -59,8 +60,8 @@ public class Board {
         }
 
         // Implementa la lógica para verificar las diagonales
-        for (int i = 0; i < 11; i++) {
-            for (int j = 0; j < 11; j++) {
+        for (int i = 0; i < boardSize-4; i++) {
+            for (int j = 0; j < boardSize-4; j++) {
                 if (boardState[i][j] != 0 &&
                         (boardState[i][j] == boardState[i + 1][j + 1] &&
                                 boardState[i][j] == boardState[i + 2][j + 2] &&
@@ -90,8 +91,8 @@ public class Board {
 
     public void printBoard() {
         System.out.println("Matriz de estado de juego");
-        for (int i = 0; i < 15; i++) {
-            for (int j = 0; j < 15; j++) {
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
                 System.out.print(boardState[i][j] + " ");
             }
             System.out.println();

@@ -160,9 +160,9 @@ public class GomokuGUI extends JFrame {
     private void fillBoardWithTiles() {
         boardContainerPanel.setLayout(new GridLayout(boardPanelSize[0],boardPanelSize[0])); // No hay espacio entre las casillas
         boardContainerPanel.setOpaque(false);
-        boardContainerPanel.setLayout(new GridLayout(15, 15));
+        boardContainerPanel.setLayout(new GridLayout(boardPanelSize[0], boardPanelSize[0]));
 
-        Border blackBorder = BorderFactory.createLineBorder(new Color(52, 30, 18, 255),2);
+        Border blackBorder = BorderFactory.createLineBorder(new Color(52, 30, 18, 255),3);
         boardContainerPanel.setBorder(blackBorder);
         Border emptyBorder = BorderFactory.createEmptyBorder(24, 21, 24, 21);
         boardContainerPanel.setBorder(BorderFactory.createCompoundBorder(blackBorder, emptyBorder));
@@ -179,6 +179,50 @@ public class GomokuGUI extends JFrame {
                 boardContainerPanel.add(panel);
             }
         }
+        addNumberLabels();
+
+
+    }
+    private void addNumberLabels() {
+        JPanel topNumbersPanel = new JPanel(new GridLayout(1, boardPanelSize[0], -50, 100));
+
+        for (int i = 1; i <= boardPanelSize[0]; i++) {
+            JLabel numberLabel = createNumberLabel(String.valueOf(i));
+            topNumbersPanel.setOpaque(false);
+            topNumbersPanel.add(numberLabel);
+        }
+
+        outerPanel.add(topNumbersPanel, BorderLayout.NORTH);
+
+        JPanel leftNumbersPanel = new JPanel(new GridLayout(boardPanelSize[0], 1, 0, -60));
+
+        for (int i = 1; i <= boardPanelSize[0]; i++) {
+            JLabel verticalLabel = createNumberLabel(String.valueOf(i));
+            leftNumbersPanel.setOpaque(false);
+            leftNumbersPanel.add(verticalLabel);
+        }
+
+        outerPanel.add(leftNumbersPanel, BorderLayout.WEST);
+
+        JPanel mainGridPanel = new JPanel(new GridLayout(boardPanelSize[0], boardPanelSize[0]));
+
+        for (int i = 0; i < boardPanelSize[0]; i++) {
+            for (int j = 0; j < boardPanelSize[0]; j++) {
+                JPanel panel = new JPanel();
+                panel.setOpaque(false);
+                panel.setPreferredSize(new Dimension(40, 40));
+                panel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 255)));
+                panel.setLayout(new OverlayLayout(panel));
+                mainGridPanel.add(panel);
+            }
+        }
+        outerPanel.add(mainGridPanel, BorderLayout.CENTER);
+    }
+
+
+    private JLabel createNumberLabel(String text) {
+        JLabel numberLabel = new JLabel(text, SwingConstants.CENTER);
+        return numberLabel;
     }
 
     private void prepareActionsBoard() {
