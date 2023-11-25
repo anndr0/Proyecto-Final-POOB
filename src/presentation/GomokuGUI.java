@@ -16,7 +16,6 @@ public class GomokuGUI extends JFrame {
             new Color(0,0,0,255),
             new Color(255, 255, 255,255)
     };
-
     private int[] boardPanelSize = {
             15
     };
@@ -118,6 +117,7 @@ public class GomokuGUI extends JFrame {
         int option = JOptionPane.showConfirmDialog(null, "¿Quieres empezar un nuevo juego?", "Nuevo juego", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
             resetBoard();
+            disableClickListeners();
         }
     }
     private void resetBoard() {
@@ -131,7 +131,14 @@ public class GomokuGUI extends JFrame {
             }
         }
     }
-
+    public void disableClickListeners() {
+        for (int i = 0; i < boardPanelSize[0]; i++) {
+            for (int j = 0; j < boardPanelSize[0]; j++) {
+                PieceClickListener clickListener = (PieceClickListener) boardPanels[i][j].getMouseListeners()[0];
+                clickListener.setIsClickInProgress(false);
+            }
+        }
+    }
     private void prepareElementsBoard() {
         String imagePath = "./images/img.jpg";
         outerOuterPanel = new ImagePanel(imagePath); // panel
@@ -205,7 +212,6 @@ public class GomokuGUI extends JFrame {
         gomoku.resetGame();
         currentPlayerTurn = winner;
 
-        // Limpia los paneles y vuelve a agregarlos al tablero
         for (int i = 0; i < boardPanelSize[0]; i++) {
             for (int j = 0; j < boardPanelSize[0]; j++) {
                 PiecePanel piecePanel = new PiecePanel(playersColors[winner-1]);
@@ -233,7 +239,6 @@ public class GomokuGUI extends JFrame {
     private void openFile() {
         JFileChooser fileChooser = new JFileChooser();
         int returnValue = fileChooser.showOpenDialog(null);
-
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             JOptionPane.showMessageDialog(null, "Abriendo archivo: " + selectedFile.getAbsolutePath());

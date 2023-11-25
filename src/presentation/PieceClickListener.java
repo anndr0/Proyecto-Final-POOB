@@ -14,7 +14,9 @@ public class PieceClickListener extends MouseAdapter {
         this.row = row;
         this.col = col;
     }
-
+    public void setIsClickInProgress(boolean value) {
+        isClickInProgress = value;
+    }
     @Override
     public void mousePressed(MouseEvent e) {
         if (!isClickInProgress) {
