@@ -21,7 +21,7 @@ public class GomokuGUI extends JFrame {
             new Color(3, 146, 206, 255)
     };
     private int[] boardPanelSize = {
-            5
+            15
     };
     private JPanel boardContainerPanel;
     private ImagePanel outerOuterPanel;
@@ -399,7 +399,10 @@ public class GomokuGUI extends JFrame {
     }
 
     public void handlePieceClick(int row, int col) {
-        gomoku.makeMove(row, col);
+
+
+        int tipoPiedra = gomoku.makeMove(row, col);
+        Color currentPlayerColor = playersColors[tipoPiedra - 1];
         updateBoardView();
 
         int winner = gomoku.checkWinner();
@@ -485,7 +488,11 @@ public class GomokuGUI extends JFrame {
                     PiecePanel piecePanel = new PiecePanel(playersColors[boardState[i][j] - 1]);
                     boardPanels[i][j].removeAll();
                     boardPanels[i][j].add(piecePanel);
+                }else {
+                    // No hay ficha en la matriz de estado, por lo que quita la ficha pintada en esa casilla
+                    boardPanels[i][j].removeAll();
                 }
+
             }
         }
         repaint();
@@ -500,8 +507,8 @@ public class GomokuGUI extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        GomokuGUI window = new GomokuGUI("ANA","NAT", Color.BLACK, Color.WHITE,new Color(134, 1, 175, 255), new Color(167, 25, 75,255),new Color(2, 71, 254,255), new Color(3, 146, 206, 255) );
-        window.setVisible(true);
-    }
+//    public static void main(String[] args) {
+//        GomokuGUI window = new GomokuGUI("ANA","NAT", Color.BLACK, Color.WHITE,new Color(134, 1, 175, 255), new Color(167, 25, 75,255),new Color(2, 71, 254,255), new Color(3, 146, 206, 255) );
+//        window.setVisible(true);
+//    }
 }
