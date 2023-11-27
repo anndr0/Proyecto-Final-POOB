@@ -491,6 +491,7 @@ public class GomokuGUI extends JFrame {
                 }else {
                     // No hay ficha en la matriz de estado, por lo que quita la ficha pintada en esa casilla
                     boardPanels[i][j].removeAll();
+                    disableClickListeners();
                 }
 
             }
