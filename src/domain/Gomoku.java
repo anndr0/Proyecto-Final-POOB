@@ -28,30 +28,6 @@ public class Gomoku {
         return board.getBoardState();
     }
 
-    public boolean isBoardFull() {
-        return board.isBoardFull();
-    }
-
-    public void handleTie() {
-        if (isBoardFull()) {
-            // Lógica para manejar el empate
-
-            // Obtener la mitad del tablero
-            int middleRow = size / 2;
-
-            for (int i = 0; i < middleRow; i++) {
-                for (int j = 0; j < size; j++) {
-                    board.makeMove(i, j, 1);
-                }
-            }
-            for (int i = middleRow; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    board.makeMove(i, j, 2);
-                }
-            }
-            ;
-        }
-    }
     public void makeMove(int row, int col) {
         int currentPlayerNumber = currentPlayerIndex + 1;
         board.makeMove(row, col, currentPlayerNumber);
