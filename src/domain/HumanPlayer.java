@@ -8,7 +8,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public int makeMove(Board board) {
-        imprimirFichas(); // Para verificar las fichas antes de hacer un movimiento
+//        imprimirFichas(); // Para verificar las fichas antes de hacer un movimiento
 
         // Obtener el tipo de la ficha actual en la posición actual
         int tipo = fichas.get(0);
@@ -35,7 +35,7 @@ public class HumanPlayer extends Player {
                 break;
             // Puedes agregar más casos según sea necesario
         }
-        imprimirFichas();
+//        imprimirFichas();
 
         // Devolver el tipo de piedra utilizado
         return tipo;

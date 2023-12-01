@@ -21,7 +21,11 @@ public class Gomoku {
     public int getSize() {
         return size;
     }
-
+    public void reiniciarFichas() {
+        for (Player player : players) {
+            player.reiniciarFichas();
+        }
+    }
     public void resetGame() {
         board.resetBoard();
 //        currentPlayerIndex = 0;
@@ -40,9 +44,6 @@ public class Gomoku {
 
     public void handleTie() {
         if (isBoardFull()) {
-            // Lógica para manejar el empate
-
-            // Obtener la mitad del tablero
             int middleRow = size / 2;
 
             for (int i = 0; i < middleRow; i++) {
@@ -58,6 +59,22 @@ public class Gomoku {
             ;
         }
     }
+    // Métodos para contar las fichas de cada tipo para el jugador específico (por número de jugador)
+    public int contarFichasNormalesPorJugador(int playerNumber) {
+        return players[playerNumber - 1].contarFichasNormales();
+    }
+
+    public int contarFichasPesadasPorJugador(int playerNumber) {
+        return players[playerNumber - 1].contarFichasPesadas();
+    }
+
+    public int contarFichasTemporalesPorJugador(int playerNumber) {
+        return players[playerNumber - 1].contarFichasTemporales();
+    }
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+
     public int makeMove(int row, int col) {
         Player currentPlayer = players[currentPlayerIndex];
 
@@ -67,17 +84,25 @@ public class Gomoku {
         // Realizar el movimiento en el tablero con el tipo de piedra obtenido
         board.makeMove(row, col, tipoPiedra);
 
-        // Contar las fichas después de cada movimiento
-        List<Integer> contadorFichas = currentPlayer.contarFichas();
-        System.out.println("Fichas del Jugador " + currentPlayer.getPlayerNumber() + " después del movimiento: ");
-        System.out.println("Normales: " + contadorFichas.get(0) + ", Pesadas: " + contadorFichas.get(1) + ", Temporales: " + contadorFichas.get(2));
+//        // Contar las fichas después de cada movimiento
+//        List<Integer> contadorFichas = currentPlayer.contarFichas();
+//        int fichasNormales = currentPlayer.contarFichasNormales();
+//        int fichasPesadas = currentPlayer.contarFichasPesadas();
+//        int fichasTemporales = currentPlayer.contarFichasTemporales();
+////
+//        System.out.println("Jugador " + currentPlayer.getPlayerNumber());
+//        System.out.println("Fichas Normales: " + fichasNormales);
+//        System.out.println("Fichas Pesadas: " + fichasPesadas);
+//        System.out.println("Fichas Temporales: " + fichasTemporales);
+
+//        System.out.println("Fichas del Jugador " + currentPlayer.getPlayerNumber() + " después del movimiento: ");
+//        System.out.println("Normales: " + contadorFichas.get(0) + ", Pesadas: " + contadorFichas.get(1) + ", Temporales: " + contadorFichas.get(2));
 
 
         // Verificar si hay un ganador después de cada movimiento
         int winner = board.checkWinner();
         if (winner != 0) {
             System.out.println("Player " + winner + " wins!");
-            // Puedes realizar acciones adicionales después de que alguien gane
         } else {
             // Cambiar al siguiente jugador
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;

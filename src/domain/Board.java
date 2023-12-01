@@ -20,7 +20,7 @@ public class Board {
                 boardState[i][j] = 0;
             }
         }
-        printBoard();
+//        printBoard();
     }
 
     public boolean isBoardFull() {
@@ -56,7 +56,7 @@ public class Board {
 
             disminuirTurnoTemporales();
 
-            printBoard();  // Puedes eliminar o ajustar esto según tus necesidades
+//            printBoard();  // Puedes eliminar o ajustar esto según tus necesidades
 //            imprimirPiedrasState();
         }
     }

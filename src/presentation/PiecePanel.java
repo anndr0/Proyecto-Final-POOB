@@ -29,6 +29,12 @@ public class PiecePanel extends JPanel {
         int xOffset = (width - circleSize) / 2;
         int yOffset = (height - circleSize) / 2;
 
+        if (pieceColor.equals(Color.WHITE)) {
+            // Si el color es blanco, agregar un borde negro
+            g2d.setColor(Color.BLACK);
+            g2d.fillOval(xOffset - 1, yOffset - 1, circleSize + 2, circleSize + 2);
+        }
+
         g2d.setColor(pieceColor);
         g2d.fillOval(xOffset, yOffset, circleSize, circleSize);
     }

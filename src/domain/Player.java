@@ -53,9 +53,12 @@ public abstract class Player {
             fichas.add(tipo);
         }
 
-        imprimirFichas();
+//        imprimirFichas();
     }
-
+    public void reiniciarFichas() {
+        fichas.clear();  // Limpiar la lista de fichas
+        inicializarFichas();  // Volver a inicializar las fichas
+    }
     public abstract int makeMove(Board board);
 
     // Método para contar el número de fichas de cada tipo
@@ -74,7 +77,53 @@ public abstract class Player {
 
         return contadorFichas;
     }
+    public int getContadorFichasNormales() {
+        return contarFichasNormales();
+    }
 
+    public int getContadorFichasPesadas() {
+        return contarFichasPesadas();
+    }
+
+    public int getContadorFichasTemporales() {
+        return contarFichasTemporales();
+    }
+
+    public int contarFichasNormales() {
+        int contadorFichasNormales = 0;
+
+        for (int ficha : fichas) {
+            if (ficha == 1 || ficha == 2) {  // Ficha normal
+                contadorFichasNormales++;
+            }
+        }
+
+        return contadorFichasNormales;
+    }
+
+    public int contarFichasPesadas() {
+        int contadorFichasPesadas = 0;
+
+        for (int ficha : fichas) {
+            if (ficha == 3 || ficha == 4) {  // Ficha pesada
+                contadorFichasPesadas++;
+            }
+        }
+
+        return contadorFichasPesadas;
+    }
+
+    public int contarFichasTemporales() {
+        int contadorFichasTemporales = 0;
+
+        for (int ficha : fichas) {
+            if (ficha == 5 || ficha == 6) {  // Ficha temporal
+                contadorFichasTemporales++;
+            }
+        }
+
+        return contadorFichasTemporales;
+    }
     public int getPlayerNumber() {
         return playerNumber;
     }
