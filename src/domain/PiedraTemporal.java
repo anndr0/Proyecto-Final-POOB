@@ -5,7 +5,7 @@ public class PiedraTemporal extends Piedra {
     private int turnosRestantes;
 
     public PiedraTemporal(int tipo) {
-        super(tipo);
+        super(tipo, 1);
         this.turnosRestantes = 7;
     }
 

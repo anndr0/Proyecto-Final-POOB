@@ -75,29 +75,13 @@ public class Gomoku {
         return currentPlayerIndex;
     }
 
-    public int makeMove(int row, int col) {
+    public void makeMove(int row, int col) {
         Player currentPlayer = players[currentPlayerIndex];
-
         // Obtener el tipo de piedra que el jugador está utilizando
         int tipoPiedra = currentPlayer.makeMove(board);
 
         // Realizar el movimiento en el tablero con el tipo de piedra obtenido
         board.makeMove(row, col, tipoPiedra);
-
-//        // Contar las fichas después de cada movimiento
-//        List<Integer> contadorFichas = currentPlayer.contarFichas();
-//        int fichasNormales = currentPlayer.contarFichasNormales();
-//        int fichasPesadas = currentPlayer.contarFichasPesadas();
-//        int fichasTemporales = currentPlayer.contarFichasTemporales();
-////
-//        System.out.println("Jugador " + currentPlayer.getPlayerNumber());
-//        System.out.println("Fichas Normales: " + fichasNormales);
-//        System.out.println("Fichas Pesadas: " + fichasPesadas);
-//        System.out.println("Fichas Temporales: " + fichasTemporales);
-
-//        System.out.println("Fichas del Jugador " + currentPlayer.getPlayerNumber() + " después del movimiento: ");
-//        System.out.println("Normales: " + contadorFichas.get(0) + ", Pesadas: " + contadorFichas.get(1) + ", Temporales: " + contadorFichas.get(2));
-
 
         // Verificar si hay un ganador después de cada movimiento
         int winner = board.checkWinner();
@@ -107,7 +91,6 @@ public class Gomoku {
             // Cambiar al siguiente jugador
             currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
         }
-        return tipoPiedra;
     }
 
 }

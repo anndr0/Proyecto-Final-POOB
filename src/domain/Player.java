@@ -53,7 +53,7 @@ public abstract class Player {
             fichas.add(tipo);
         }
 
-//        imprimirFichas();
+        imprimirFichas();
     }
     public void reiniciarFichas() {
         fichas.clear();  // Limpiar la lista de fichas

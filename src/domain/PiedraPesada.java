@@ -1,15 +1,11 @@
 package domain;
 
 public class PiedraPesada extends Piedra {
-    private int jugador;
-
     public PiedraPesada(int tipo) {
-        super(tipo);
+        super(tipo, 2);
     }
 
-    public int getJugador() {
-        return jugador;
-    }
+
 }
 
 

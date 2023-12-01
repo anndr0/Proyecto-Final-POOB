@@ -443,9 +443,9 @@ public class GomokuGUI extends JFrame {
     }
 
     public void handlePieceClick(int row, int col) {
-        int tipoPiedra = gomoku.makeMove(row, col);
+        gomoku.makeMove(row, col);
         currentPlayerTurn = (currentPlayerTurn == 1) ? 2 : 1;
-        Color currentPlayerColor = playersColors[tipoPiedra - 1];
+
         updateBoardView();
         updatePieceNumbers();
 

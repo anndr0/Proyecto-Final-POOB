@@ -1,5 +1,9 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class Board {
     private int[][] boardState;
 
@@ -20,7 +24,7 @@ public class Board {
                 boardState[i][j] = 0;
             }
         }
-//        printBoard();
+        printBoard();
     }
 
     public boolean isBoardFull() {
@@ -36,8 +40,17 @@ public class Board {
         return true;
     }
 
+    private void resetPiedrasState() {
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                piedrasState[i][j] = null;
+            }
+        }
+    }
+
     public void resetBoard() {
         initializeBoard();
+        resetPiedrasState();
     }
     public int[][] getBoardState() {
         return boardState;
@@ -56,8 +69,9 @@ public class Board {
 
             disminuirTurnoTemporales();
 
-//            printBoard();  // Puedes eliminar o ajustar esto según tus necesidades
-//            imprimirPiedrasState();
+            printBoard();
+            imprimirPiedrasState();
+
         }
     }
 
@@ -99,24 +113,21 @@ public class Board {
         // Implementa la lógica para verificar las filas
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize - 4; j++) {
-                int player1Count = 0;
-                int player2Count = 0;
+                int sumaJugador1 = 0;
+                int sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int currentCell = boardState[i][j + k];
-
-                    // Incrementa el contador del jugador correspondiente
-                    if (currentCell == 1 || currentCell == 3 || currentCell == 5) {
-                        player1Count++;
-                    } else if (currentCell == 2 || currentCell == 4 || currentCell == 6) {
-                        player2Count++;
+                    int tipo = boardState[i][j + k];
+                    if (tipo == 1 || tipo == 3 || tipo == 5) {
+                        sumaJugador1 += piedrasState[i][j + k].getValor();
+                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
+                        sumaJugador2 += piedrasState[i][j + k].getValor();
                     }
                 }
 
-                // Verifica si hay un ganador en la fila
-                if (player1Count == 5) {
+                if (sumaJugador1 == 5) {
                     return 1;  // Jugador 1 gana
-                } else if (player2Count == 5) {
+                } else if (sumaJugador2 == 5) {
                     return 2;  // Jugador 2 gana
                 }
             }
@@ -125,24 +136,21 @@ public class Board {
         // Implementa la lógica para verificar las columnas
         for (int i = 0; i < boardSize - 4; i++) {
             for (int j = 0; j < boardSize; j++) {
-                int player1Count = 0;
-                int player2Count = 0;
+                int sumaJugador1 = 0;
+                int sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int currentCell = boardState[i + k][j];
-
-                    // Incrementa el contador del jugador correspondiente
-                    if (currentCell == 1 || currentCell == 3 || currentCell == 5) {
-                        player1Count++;
-                    } else if (currentCell == 2 || currentCell == 4 || currentCell == 6) {
-                        player2Count++;
+                    int tipo = boardState[i + k][j];
+                    if (tipo == 1 || tipo == 3 || tipo == 5) {
+                        sumaJugador1 += piedrasState[i + k][j].getValor();
+                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
+                        sumaJugador2 += piedrasState[i + k][j].getValor();
                     }
                 }
 
-                // Verifica si hay un ganador en la columna
-                if (player1Count == 5) {
+                if (sumaJugador1 == 5) {
                     return 1;  // Jugador 1 gana
-                } else if (player2Count == 5) {
+                } else if (sumaJugador2 == 5) {
                     return 2;  // Jugador 2 gana
                 }
             }
@@ -151,53 +159,52 @@ public class Board {
         // Implementa la lógica para verificar las diagonales
         for (int i = 0; i < boardSize - 4; i++) {
             for (int j = 0; j < boardSize - 4; j++) {
-                int player1Count = 0;
-                int player2Count = 0;
+                int sumaJugador1 = 0;
+                int sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int currentCell = boardState[i + k][j + k];
-
-                    // Incrementa el contador del jugador correspondiente
-                    if (currentCell == 1 || currentCell == 3 || currentCell == 5) {
-                        player1Count++;
-                    } else if (currentCell == 2 || currentCell == 4 || currentCell == 6) {
-                        player2Count++;
+                    int tipo = boardState[i + k][j + k];
+                    if (tipo == 1 || tipo == 3 || tipo == 5) {
+                        sumaJugador1 += piedrasState[i + k][j + k].getValor();
+                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
+                        sumaJugador2 += piedrasState[i + k][j + k].getValor();
                     }
                 }
 
-                // Verifica si hay un ganador en la diagonal
-                if (player1Count == 5) {
+                if (sumaJugador1 == 5) {
                     return 1;  // Jugador 1 gana
-                } else if (player2Count == 5) {
+                } else if (sumaJugador2 == 5) {
                     return 2;  // Jugador 2 gana
                 }
 
-                player1Count = 0;
-                player2Count = 0;
+                sumaJugador1 = 0;
+                sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int currentCell = boardState[i + 4 - k][j + k];
-
-                    // Incrementa el contador del jugador correspondiente
-                    if (currentCell == 1 || currentCell == 3 || currentCell == 5) {
-                        player1Count++;
-                    } else if (currentCell == 2 || currentCell == 4 || currentCell == 6) {
-                        player2Count++;
+                    int tipo = boardState[i + 4 - k][j + k];
+                    if (tipo == 1 || tipo == 3 || tipo == 5) {
+                        sumaJugador1 += piedrasState[i + 4 - k][j + k].getValor();
+                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
+                        sumaJugador2 += piedrasState[i + 4 - k][j + k].getValor();
                     }
                 }
 
-                // Verifica si hay un ganador en la diagonal inversa
-                if (player1Count == 5) {
+                if (sumaJugador1 == 5) {
                     return 1;  // Jugador 1 gana
-                } else if (player2Count == 5) {
+                } else if (sumaJugador2 == 5) {
                     return 2;  // Jugador 2 gana
                 }
             }
         }
-
         // No hay ganador
         return 0;
     }
+
+
+    private int getPlayerNumberFromPiedra(Piedra piedra) {
+        return piedra != null ? piedra.getTipo() : 0;
+    }
+
 
 
     public int convertCoordinatesToIndex(int row, int col) {
