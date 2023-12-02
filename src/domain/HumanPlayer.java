@@ -6,38 +6,27 @@ public class HumanPlayer extends Player {
         super(playerNumber);
     }
 
-    @Override
-    public int makeMove(Board board) {
+//    @Override
+//    public int makeMove(Board board, int selectedPieceType) {
+////        // Verificar si el jugador tiene fichas disponibles del tipo seleccionado
+////        if (fichas.contains(selectedPieceType)) {
+////            fichas.remove(fichas.indexOf(selectedPieceType));  // Remover la ficha seleccionada
+////            return selectedPieceType;  // Devolver el tipo de ficha utilizado
+////        } else {
+////            // Implementar manejo de caso en el que no hay fichas disponibles del tipo seleccionado
+////            // Puedes mostrar un mensaje al usuario indicando que no hay fichas disponibles
+////            return makeMove(board, selectedPieceType);  // Llamada recursiva para obtener una ficha válida
+////        }
+////    }
+//    }
 
-        // Obtener el tipo de la ficha actual en la posición actual
-        int tipo = fichas.get(0);
 
-        // Realizar la acción correspondiente según el tipo de piedra
-        switch (tipo) {
-            case 1:
-                fichas.remove(0);
-                break;
-            case 2:
-                fichas.remove(0);
-                break;
-            case 3:
-                fichas.remove(0);
-                break;
-            case 4:
-                fichas.remove(0);
-                break;
-            case 5:
-                fichas.remove(0);
-                break;
-            case 6:
-                fichas.remove(0);
-                break;
-            // Puedes agregar más casos según sea necesario
-        }
-//        imprimirFichas();
+    public boolean hasPieceOfType(int pieceType) {
+        return fichas.contains(pieceType);
+    }
 
-        // Devolver el tipo de piedra utilizado
-        return tipo;
+    public void removePiece(int pieceType) {
+        fichas.remove(Integer.valueOf(pieceType));
     }
 
 }

@@ -9,6 +9,8 @@ public class PieceClickListener extends MouseAdapter {
     private int col;
     private boolean isClickInProgress = false;
 
+
+
     public PieceClickListener(GomokuGUI gomokuGUI, int row, int col) {
         this.gomokuGUI = gomokuGUI;
         this.row = row;
@@ -21,7 +23,9 @@ public class PieceClickListener extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         if (!isClickInProgress) {
             isClickInProgress = true;
-            gomokuGUI.handlePieceClick(row, col);
+            int selectedPieceType = gomokuGUI.getSelectedPieceType();
+            gomokuGUI.handlePieceClick(row, col, selectedPieceType);
         }
     }
+
 }

@@ -38,4 +38,5 @@ public class PiecePanel extends JPanel {
         g2d.setColor(pieceColor);
         g2d.fillOval(xOffset, yOffset, circleSize, circleSize);
     }
+
 }

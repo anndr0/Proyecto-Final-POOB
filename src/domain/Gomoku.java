@@ -75,22 +75,30 @@ public class Gomoku {
         return currentPlayerIndex;
     }
 
-    public void makeMove(int row, int col) {
+    public void makeMove(int row, int col, int selectedPieceType) {
         Player currentPlayer = players[currentPlayerIndex];
-        // Obtener el tipo de piedra que el jugador está utilizando
-        int tipoPiedra = currentPlayer.makeMove(board);
 
-        // Realizar el movimiento en el tablero con el tipo de piedra obtenido
-        board.makeMove(row, col, tipoPiedra);
+        // Verificar si el jugador tiene fichas del tipo seleccionado
+        if (currentPlayer.hasPieceOfType(selectedPieceType)) {
+            // Realizar el movimiento en el tablero con el tipo de piedra obtenido
+            board.makeMove(row, col, selectedPieceType);
 
-        // Verificar si hay un ganador después de cada movimiento
-        int winner = board.checkWinner();
-        if (winner != 0) {
-            System.out.println("Player " + winner + " wins!");
+            // Eliminar la ficha del jugador
+            currentPlayer.removePiece(selectedPieceType);
+
+            // Verificar si hay un ganador después de cada movimiento
+            int winner = board.checkWinner();
+            if (winner != 0) {
+                System.out.println("Player " + winner + " wins!");
+            } else {
+                // Cambiar al siguiente jugador
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            }
         } else {
-            // Cambiar al siguiente jugador
-            currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            // El jugador no tiene fichas del tipo seleccionado, manejar este caso según tus necesidades
+            System.out.println("Player does not have the selected piece type.");
         }
     }
+
 
 }

@@ -59,7 +59,11 @@ public abstract class Player {
         fichas.clear();  // Limpiar la lista de fichas
         inicializarFichas();  // Volver a inicializar las fichas
     }
-    public abstract int makeMove(Board board);
+//    public abstract int makeMove(Board board, int type);
+
+    public abstract boolean hasPieceOfType(int pieceType);
+
+    public abstract void removePiece(int pieceType);
 
     // Método para contar el número de fichas de cada tipo
     public List<Integer> contarFichas() {
