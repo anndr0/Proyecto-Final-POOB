@@ -8,7 +8,6 @@ public class GanadorGUI extends JFrame{
         setTitle("Ganador :3");
         setSize(400, 200);
         setLocationRelativeTo(null);
-//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
         ImagePanel backgroundPanel = new ImagePanel("./images/img.jpg");
@@ -35,17 +34,6 @@ public class GanadorGUI extends JFrame{
         backgroundPanel.add(winnerLabel, gbc);
 
 
-
         add(backgroundPanel);
     }
-
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                GanadorGUI inicio = new GanadorGUI("Nat");
-//                inicio.setVisible(true);
-//            }
-//        });
-//    }
 }

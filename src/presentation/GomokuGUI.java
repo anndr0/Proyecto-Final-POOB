@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.io.File;
+import java.io.IOException;
 
 public class GomokuGUI extends JFrame {
     private Gomoku gomoku;
@@ -173,15 +174,14 @@ public class GomokuGUI extends JFrame {
             }
         }
     }
+
     private void prepareElementsBoard() {
         String imagePath = "./images/img.jpg";
 
-        // Crear outerOuterPanel
         outerOuterPanel = new ImagePanel(imagePath);
         outerOuterPanel.setLayout(new BorderLayout());
         outerOuterPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
-        // Crear boardContainerPanel y llenar con casillas
         outerPanel = new JPanel();
         outerPanel.setOpaque(false);
         outerPanel.setLayout(new BorderLayout());
@@ -192,16 +192,12 @@ public class GomokuGUI extends JFrame {
         outerPanel.add(boardContainerPanel, BorderLayout.CENTER);
         outerOuterPanel.add(outerPanel, BorderLayout.CENTER);
 
-        // Crear nuevo panel a la derecha de outerOuterPanel
         panelToTheRight = new JPanel();
-        // Puedes personalizar este panel según tus necesidades
         panelToTheRight.setBackground(Color.WHITE);
         panelToTheRight.setPreferredSize(new Dimension(200, outerOuterPanel.getHeight())); // Ajusta el ancho según sea necesario
 
-        // Crear contenedor y agregar ambos paneles
         JPanel containerPanel = new JPanel(new BorderLayout());
 
-        //AQUI VA EL METODO
         addVerticalContainersToPanelToTheRight();
 
         containerPanel.add(outerOuterPanel, BorderLayout.CENTER);
@@ -227,14 +223,22 @@ public class GomokuGUI extends JFrame {
         verticalContainer.setLayout(new BoxLayout(verticalContainer, BoxLayout.Y_AXIS));
 
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
 
         PiecePanel circlePanel = new PiecePanel(normalColor);
         circlePanel.setPreferredSize(new Dimension(40, 40));
         circlePanel.setOpaque(false);
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Center Baseline", Font.CENTER_BASELINE, 20));
+        try {
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./fuente/LEMONMILK-Medium.otf")).deriveFont(20f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+            titleLabel.setFont(customFont);
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+
         titleLabel.setForeground(Color.BLACK);
 
         topPanel.add(circlePanel);
@@ -242,10 +246,10 @@ public class GomokuGUI extends JFrame {
         topPanel.setBackground(Color.WHITE);
 
         topPanel.add(Box.createVerticalStrut(20));
-        topPanel.add(createTitleRow(new String[]{"Normal", "Pesada", "Temporal"}));
+        topPanel.add(createTitleRow(new String[]{"Normal", "Pesada", "Temporal"}, Color.BLACK));
 
         topPanel.add(createCircleRowJ1(normalColor, pesadaColor,  tempColor));
-        topPanel.add(numberPieces(currentPlayerTurn));
+        topPanel.add(numberPieces(currentPlayerTurn,Color.BLACK));
 
         verticalContainer.add(topPanel);
         verticalContainer.setBackground(Color.WHITE);
@@ -258,25 +262,33 @@ public class GomokuGUI extends JFrame {
         verticalContainer.setLayout(new BoxLayout(verticalContainer, BoxLayout.Y_AXIS));
 
         JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 10));
+        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
 
         PiecePanel circlePanel = new PiecePanel(normalColor);
         circlePanel.setPreferredSize(new Dimension(40, 40));
         circlePanel.setOpaque(false);
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(new Font("Center Baseline", Font.CENTER_BASELINE, 20));
-        titleLabel.setForeground(Color.BLACK);
+        try {
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./fuente/LEMONMILK-Medium.otf")).deriveFont(20f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+            titleLabel.setFont(customFont);
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+
+        titleLabel.setForeground(Color.WHITE);
 
         topPanel.add(circlePanel);
         topPanel.add(titleLabel);
-        topPanel.setBackground(Color.WHITE);
+        topPanel.setBackground(Color.BLACK);
 
-        topPanel.add(Box.createVerticalStrut(20));
-        topPanel.add(createTitleRow(new String[]{"Normal", "Pesada", "Temporal"}));
+//        topPanel.add(Box.createVerticalStrut(20));
+        topPanel.add(createTitleRow(new String[]{"Normal", "Pesada", "Temporal"}, Color.WHITE));
 
-        topPanel.add(createCircleRowJ2(normalColor, pesadaColor,  tempColor));
-        topPanel.add(numberPieces(currentPlayerTurn));
+        topPanel.add(createCircleRowJ2(normalColor, pesadaColor, tempColor));
+        topPanel.add(numberPieces(currentPlayerTurn, Color.WHITE));
 
         verticalContainer.add(topPanel);
         verticalContainer.setBackground(Color.WHITE);
@@ -284,19 +296,15 @@ public class GomokuGUI extends JFrame {
         return verticalContainer;
     }
 
+
     private JPanel createCircleRow(Color normalColor, Color pesadaColor, Color tempColor, int normalType, int pesadaType, int tempType) {
         JPanel circleRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         circleRow.setOpaque(false);
 
-        // Crear y agregar el primer círculo
         PiecePanel normalCirclePanel = createPiecePanel(normalColor, normalType);
         circleRow.add(normalCirclePanel);
-
-        // Crear y agregar el segundo círculo
         PiecePanel pesadaCirclePanel = createPiecePanel(pesadaColor, pesadaType);
         circleRow.add(pesadaCirclePanel);
-
-        // Crear y agregar el tercer círculo
         PiecePanel tempCirclePanel = createPiecePanel(tempColor, tempType);
         circleRow.add(tempCirclePanel);
 
@@ -325,8 +333,8 @@ public class GomokuGUI extends JFrame {
         return createCircleRow(normalColor, pesadaColor, tempColor, 2, 4, 6);
     }
 
-    private JPanel numberPieces(int player) {
-        JPanel numberRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    private JPanel numberPieces(int player, Color color) {
+        JPanel numberRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         numberRow.setOpaque(false);
 
         int[] types = {
@@ -337,7 +345,16 @@ public class GomokuGUI extends JFrame {
 
         for (int i = 0; i < 3; i++) {
             int type = types[i];
-            JLabel numeros = new JLabel(String.valueOf(type));
+            JLabel numeros = new JLabel("  " + String.valueOf(type));
+            try {
+                Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./fuente/LEMONMILK-Medium.otf")).deriveFont(12f);
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                ge.registerFont(customFont);
+                numeros.setFont(customFont);
+            } catch (IOException | FontFormatException e) {
+                e.printStackTrace();
+            }
+            numeros.setForeground(color);
             numeros.setPreferredSize(new Dimension(30, 30));
             numeros.setOpaque(false);
             numeros.setLayout(new BorderLayout());
@@ -346,12 +363,13 @@ public class GomokuGUI extends JFrame {
         return numberRow;
     }
 
+
     private void updatePieceNumbers() {
-        updateNumberRow(verticalContainer1, 1);
-        updateNumberRow(verticalContainer2, 2);
+        updateNumberRow(verticalContainer1, 1, Color.BLACK);
+        updateNumberRow(verticalContainer2, 2, Color.WHITE);
     }
 
-    private void updateNumberRow(JPanel existingContainer, int player) {
+    private void updateNumberRow(JPanel existingContainer, int player, Color color) {
         if (existingContainer != null) {
             Component[] components = existingContainer.getComponents();
 
@@ -363,7 +381,7 @@ public class GomokuGUI extends JFrame {
                     JPanel existingNumbersRow = (JPanel) topComponents[5];
                     existingNumbersRow.removeAll();
 
-                    JPanel newNumberRow = numberPieces(player);
+                    JPanel newNumberRow = numberPieces(player, color);
 
                     for (Component newComponent : newNumberRow.getComponents()) {
                         existingNumbersRow.add(newComponent);
@@ -393,7 +411,7 @@ public class GomokuGUI extends JFrame {
         repaint();
     }
 
-    private JPanel createTitleRow(String[] circleTypes) {
+    private JPanel createTitleRow(String[] circleTypes, Color color) {
         JPanel titlesRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         titlesRow.setOpaque(false);
 
@@ -402,7 +420,15 @@ public class GomokuGUI extends JFrame {
 
         JLabel typeLabel1 = new JLabel("Fichas disponibles");
         typeLabel1.setHorizontalAlignment(JLabel.CENTER);
-        typeLabel1.setForeground(Color.BLACK);
+        typeLabel1.setForeground(color);
+        try {
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./fuente/LEMONMILK-Medium.otf")).deriveFont(13f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+            typeLabel1.setFont(customFont);
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
         titleRow.add(typeLabel1, BorderLayout.NORTH);
 
         JPanel typesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 10));
@@ -411,7 +437,15 @@ public class GomokuGUI extends JFrame {
         for (int i = 0; i < 3; i++) {
             JLabel typeLabel = new JLabel(circleTypes[i]);
             typeLabel.setHorizontalAlignment(JLabel.CENTER);
-            typeLabel.setForeground(Color.BLACK);
+            typeLabel.setForeground(color);
+            try {
+                Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./fuente/LEMONMILK-Medium.otf")).deriveFont(10f);
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                ge.registerFont(customFont);
+                typeLabel.setFont(customFont);
+            } catch (IOException | FontFormatException e) {
+                e.printStackTrace();
+            }
             typesPanel.add(typeLabel, BorderLayout.CENTER);
         }
 
@@ -419,6 +453,7 @@ public class GomokuGUI extends JFrame {
         titlesRow.add(titleRow, BorderLayout.CENTER);
         return titlesRow;
     }
+
 
     private void fillBoardWithTiles() {
         boardContainerPanel.setLayout(new GridLayout(boardPanelSize[0],boardPanelSize[0])); // No hay espacio entre las casillas

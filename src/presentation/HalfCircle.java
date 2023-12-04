@@ -26,32 +26,10 @@ public class HalfCircle extends JPanel {
         int xOffset = (width - circleSize) / 2;
         int yOffset = (height - circleSize) / 2;
 
-        // Dibuja la mitad superior del círculo en un color
         g.setColor(color1);
         g.fillArc(xOffset, yOffset, circleSize, circleSize, 0, 180);
 
-        // Dibuja la mitad inferior del círculo en otro color
         g.setColor(color2);
         g.fillArc(xOffset, yOffset, circleSize, circleSize, 180, 180);
     }
-
-
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame frame = new JFrame("HalfCircle Test");
-//            frame.setSize(400, 400);
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//
-//            // Crea una instancia de HalfCircle con dos colores
-//            Color color1 = Color.BLUE;
-//            Color color2 = Color.GREEN;
-//            HalfCircle halfCircle = new HalfCircle(color1, color2);
-//
-//            // Agrega la instancia de HalfCircle al contenido del JFrame
-//            frame.getContentPane().add(halfCircle);
-//
-//            // Muestra el JFrame
-//            frame.setVisible(true);
-//        });
-//    }
 }

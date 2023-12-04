@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 
 public class ColorChooserButton extends JButton {
     private Color selectedColor;
-    private char buttonText; // Letra en el centro del círculo
+    private char buttonText;
 
     public ColorChooserButton(Color initialColor, char buttonText) {
         this.selectedColor = initialColor;
@@ -43,7 +43,7 @@ public class ColorChooserButton extends JButton {
         g2d.setColor(selectedColor);
         g2d.fillOval(0, 0, getWidth(), getHeight());
 
-        // Cambiar el color del texto en función del color del círculo
+        // cambiar el color del texto en función del color del círculo
         if (selectedColor.equals(Color.BLACK)) {
             g2d.setColor(Color.WHITE);
         } else {
@@ -57,25 +57,5 @@ public class ColorChooserButton extends JButton {
         g2d.setColor(selectedColor);
         g2d.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
         g2d.dispose();
-    }
-
-
-    // Ejemplo de uso
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JFrame frame = new JFrame("Color Chooser Button");
-                frame.setSize(300, 200);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                JPanel panel = new JPanel();
-                ColorChooserButton colorChooserButton = new ColorChooserButton(Color.RED, 'A');
-                panel.add(colorChooserButton);
-
-                frame.add(panel);
-                frame.setVisible(true);
-            }
-        });
     }
 }

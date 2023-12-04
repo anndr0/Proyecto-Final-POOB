@@ -8,7 +8,6 @@ public class EmpateGUI extends JFrame {
         setTitle("POOB");
         setSize(400, 200);
         setLocationRelativeTo(null);
-//        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
         ImagePanel backgroundPanel = new ImagePanel("./images/img.jpg");
@@ -25,18 +24,6 @@ public class EmpateGUI extends JFrame {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         backgroundPanel.add(titleLabel, gbc);
-
-
-
         add(backgroundPanel);
     }
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-//                EmpateGUI inicio = new EmpateGUI();
-//                inicio.setVisible(true);
-//            }
-//        });
-//    }
 }

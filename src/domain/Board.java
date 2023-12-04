@@ -196,7 +196,6 @@ public class Board {
                 }
             }
         }
-        // No hay ganador
         return 0;
     }
 
