@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class PiecePanel extends JPanel {
     private Color pieceColor;
+
     public PiecePanel(Color color) {
         this.pieceColor = color;
         setOpaque(false);

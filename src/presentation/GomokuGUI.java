@@ -400,7 +400,9 @@ public class GomokuGUI extends JFrame {
             for (int j = 0; j < boardPanelSize[0]; j++) {
                 if (boardState[i][j] != 0) {
                     PiecePanel piecePanel = new PiecePanel(playersColors[boardState[i][j] - 1]);
+//                    SpecialPiecePanel special = new SpecialPiecePanel(Color.red);
                     boardPanels[i][j].removeAll();
+//                    boardPanels[i][j].add(special);
                     boardPanels[i][j].add(piecePanel);
                 }else {
                     boardPanels[i][j].removeAll();
@@ -410,6 +412,7 @@ public class GomokuGUI extends JFrame {
         }
         repaint();
     }
+
 
     private JPanel createTitleRow(String[] circleTypes, Color color) {
         JPanel titlesRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));

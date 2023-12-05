@@ -5,7 +5,7 @@ import java.util.Random;
 public class Board {
     private int[][] boardState;
     private Casilla[][] casillasEspeciales;
-    private Piedra[][] piedrasState;  // Nueva matriz para las instancias de las piedras
+    private Piedra[][] piedrasState;
     private int size;
 
     public Board(int size) {
@@ -14,7 +14,7 @@ public class Board {
         piedrasState = new Piedra[this.size][this.size];
         casillasEspeciales = new Casilla[this.size][this.size];
         initializeBoard();
-        inicializarCasillasEspecialesAleatorias(0.2);
+        inicializarCasillasEspecialesAleatorias(0.5);
 
     }
 
@@ -29,7 +29,7 @@ public class Board {
             for (int j = 0; j < size; j++) {
                 if (cantidadCasillasEspeciales > 0 && random.nextInt(size * size) < cantidadCasillasEspeciales) {
                     // 0 para Mina, 1 para Teleport, 2 para Golden
-                    int tipoEspecial = random.nextInt(2);
+                    int tipoEspecial = random.nextInt(3);
                     switch (tipoEspecial) {
                         case 0:
                             casillasEspeciales[i][j] = new CasillaMina();
@@ -52,7 +52,10 @@ public class Board {
     }
 
 
-
+    public boolean isMine(int row, int col) {
+        Casilla casilla = casillasEspeciales[row][col];
+        return casilla instanceof CasillaMina;
+    }
 
 
     public void printCasillasEspeciales() {
@@ -115,6 +118,9 @@ public class Board {
     public Piedra[][] getPiedrasState() {
         return piedrasState;
     }
+    public Casilla[][] getCasillasEspeciales() {
+        return casillasEspeciales;
+    }
 
     public int getSize(){
         return size;
@@ -122,24 +128,19 @@ public class Board {
 
     public void makeMove(int row, int col, int piedraType) {
         if (boardState[row][col] == 0) {
-            // Crear una nueva piedra según el tipo
             Piedra piedra = crearPiedraSegunTipo(piedraType);
-
-            // Colocar la piedra en la matriz de estados
             boardState[row][col] = piedraType;
-
-            // Colocar la piedra en la matriz de piedras
             piedrasState[row][col] = piedra;
-
             disminuirTurnoTemporales();
 
             printBoard();
             imprimirPiedrasState();
-
+            printCasillasEspeciales();
         }
         Casilla casillaEspecial = casillasEspeciales[row][col];
         if (casillaEspecial != null) {
             casillaEspecial.aplicarEfecto(this, row, col);
+            casillasEspeciales[row][col] = new CasillaNormal();
         }
     }
 

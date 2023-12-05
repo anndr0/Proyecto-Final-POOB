@@ -11,6 +11,7 @@ public class Gomoku {
     private int currentPlayerIndex;
     private int size;
 
+
     public Gomoku(int size) {
         this.size = size;
         board = new Board(size);
@@ -39,15 +40,11 @@ public class Gomoku {
         return board.checkWinner();
     }
 
-    public void inicializarCasillasEspeciales() {
-        // Puedes configurar casillas especiales según tus necesidades
-        board.setCasillaEspecial(2, 2, new CasillaMina());
-        board.setCasillaEspecial(5, 5, new CasillaTeleport());
-//        board.setCasillaEspecial(8, 8, new CasillaGolden());
-    }
-
     public int[][] getBoardState() {
         return board.getBoardState();
+    }
+    public Casilla[][] getCasillasState() {
+        return board.getCasillasEspeciales();
     }
     public boolean isBoardFull() {
         return board.isBoardFull();
@@ -67,7 +64,6 @@ public class Gomoku {
                     board.makeMove(i, j, 2);
                 }
             }
-            ;
         }
     }
     // Métodos para contar las fichas de cada tipo para el jugador específico (por número de jugador)
@@ -103,6 +99,8 @@ public class Gomoku {
             System.out.println("Player does not have the selected piece type.");
         }
     }
-
+    public boolean isMine(int row, int col) {
+        return board.isMine(row, col);
+    }
 
 }

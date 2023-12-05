@@ -65,7 +65,6 @@ public abstract class Player {
 
     public abstract void removePiece(int pieceType);
 
-    // Método para contar el número de fichas de cada tipo
     public List<Integer> contarFichas() {
         List<Integer> contadorFichas = new ArrayList<>(Collections.nCopies(3, 0));
 
@@ -78,9 +77,9 @@ public abstract class Player {
                 contadorFichas.set(2, contadorFichas.get(2) + 1);
             }
         }
-
         return contadorFichas;
     }
+
     public int contarFichasNormales() {
         int contadorFichasNormales = 0;
 
