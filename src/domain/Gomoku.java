@@ -15,9 +15,13 @@ public class Gomoku {
         this.size = size;
         board = new Board(size);
         players = new Player[]{new HumanPlayer(1), new HumanPlayer(2)};
+//        inicializarCasillasEspeciales();
         currentPlayerIndex = 0;
     }
 
+    public Board getBoard() {
+        return board;
+    }
     public int getSize() {
         return size;
     }
@@ -33,6 +37,13 @@ public class Gomoku {
 
     public int checkWinner() {
         return board.checkWinner();
+    }
+
+    public void inicializarCasillasEspeciales() {
+        // Puedes configurar casillas especiales según tus necesidades
+        board.setCasillaEspecial(2, 2, new CasillaMina());
+        board.setCasillaEspecial(5, 5, new CasillaTeleport());
+//        board.setCasillaEspecial(8, 8, new CasillaGolden());
     }
 
     public int[][] getBoardState() {

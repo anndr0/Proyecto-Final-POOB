@@ -31,12 +31,6 @@ public class PiecePanel extends JPanel {
 
         g2d.setColor(pieceColor);
         g2d.fillOval(xOffset, yOffset, circleSize, circleSize);
-
-//        int diameterInner = circleSize * 2 / 3; // Ajusta el tamaño del círculo rojo aquí
-//        int xInner = getWidth() / 2 - diameterInner / 2;
-//        int yInner = getHeight() / 2 - diameterInner / 2;
-//
-//        g2d.fillOval(xInner, yInner, diameterInner, diameterInner);
     }
 
 }

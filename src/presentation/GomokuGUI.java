@@ -27,7 +27,7 @@ public class GomokuGUI extends JFrame {
             new Color(3, 146, 206, 255)
     };
     private int[] boardPanelSize = {
-            15
+            5
     };
     private JPanel boardContainerPanel, outerPanel, verticalContainer, panelToTheRight, verticalContainer1, verticalContainer2;
     private ImagePanel outerOuterPanel;

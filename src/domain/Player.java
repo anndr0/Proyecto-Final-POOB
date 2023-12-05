@@ -11,8 +11,8 @@ public abstract class Player {
     protected List<Integer> fichas;
     protected long tiempoInvertido;
     protected int puntaje;
-    protected int row; // Nueva variable
-    protected int col; // Nueva variable
+    protected int row;
+    protected int col;
 
     public Player(int playerNumber) {
         this.playerNumber = playerNumber;
@@ -81,18 +81,6 @@ public abstract class Player {
 
         return contadorFichas;
     }
-    public int getContadorFichasNormales() {
-        return contarFichasNormales();
-    }
-
-    public int getContadorFichasPesadas() {
-        return contarFichasPesadas();
-    }
-
-    public int getContadorFichasTemporales() {
-        return contarFichasTemporales();
-    }
-
     public int contarFichasNormales() {
         int contadorFichasNormales = 0;
 

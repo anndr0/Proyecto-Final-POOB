@@ -1,26 +1,83 @@
 package domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Random;
 
 public class Board {
     private int[][] boardState;
-
+    private Casilla[][] casillasEspeciales;
     private Piedra[][] piedrasState;  // Nueva matriz para las instancias de las piedras
-    private int boardSize;
+    private int size;
 
     public Board(int size) {
-        boardSize = size;
-        boardState = new int[boardSize][boardSize];
-        piedrasState = new Piedra[boardSize][boardSize];  // Inicialización de la nueva matriz
-
+        this.size = size;
+        boardState = new int[this.size][this.size];
+        piedrasState = new Piedra[this.size][this.size];
+        casillasEspeciales = new Casilla[this.size][this.size];
         initializeBoard();
+        inicializarCasillasEspecialesAleatorias(0.2);
+
     }
 
+    public void setCasillaEspecial(int row, int col, Casilla casilla) {
+        casillasEspeciales[row][col] = casilla;
+    }
+    public void inicializarCasillasEspecialesAleatorias(double porcentajeCasillasEspeciales) {
+        Random random = new Random();
+        int cantidadCasillasEspeciales = (int) (size * size * porcentajeCasillasEspeciales);
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (cantidadCasillasEspeciales > 0 && random.nextInt(size * size) < cantidadCasillasEspeciales) {
+                    // 0 para Mina, 1 para Teleport, 2 para Golden
+                    int tipoEspecial = random.nextInt(2);
+                    switch (tipoEspecial) {
+                        case 0:
+                            casillasEspeciales[i][j] = new CasillaMina();
+                            break;
+                        case 1:
+                            casillasEspeciales[i][j] = new CasillaTeleport();
+                            break;
+//                        case 2:
+//                            casillasEspeciales[i][j] = new CasillaGolden();
+//                            break;
+                    }
+                    cantidadCasillasEspeciales--;
+                } else {
+                    // normal
+                    casillasEspeciales[i][j] = new CasillaNormal();
+                }
+            }
+        }
+        printCasillasEspeciales();
+    }
+
+
+
+
+
+    public void printCasillasEspeciales() {
+        System.out.println("Matriz de Casillas Especiales:");
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (casillasEspeciales[i][j] != null) {
+                    System.out.print(casillasEspeciales[i][j].getClass().getSimpleName() + " ");
+                } else {
+                    System.out.print("null ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public void aplicarEfectoCasillaEspecial(int row, int col) {
+        Casilla casilla = casillasEspeciales[row][col];
+        if (casilla != null) {
+            casilla.aplicarEfecto(this, row, col);
+        }
+    }
     private void initializeBoard() {
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 boardState[i][j] = 0;
             }
         }
@@ -28,8 +85,8 @@ public class Board {
     }
 
     public boolean isBoardFull() {
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (boardState[i][j] == 0) {
                     // Si alguna casilla está vacía, el tablero no está lleno
                     return false;
@@ -41,8 +98,8 @@ public class Board {
     }
 
     private void resetPiedrasState() {
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 piedrasState[i][j] = null;
             }
         }
@@ -54,6 +111,13 @@ public class Board {
     }
     public int[][] getBoardState() {
         return boardState;
+    }
+    public Piedra[][] getPiedrasState() {
+        return piedrasState;
+    }
+
+    public int getSize(){
+        return size;
     }
 
     public void makeMove(int row, int col, int piedraType) {
@@ -73,12 +137,17 @@ public class Board {
             imprimirPiedrasState();
 
         }
+        Casilla casillaEspecial = casillasEspeciales[row][col];
+        if (casillaEspecial != null) {
+            casillaEspecial.aplicarEfecto(this, row, col);
+        }
     }
+
 
     private void disminuirTurnoTemporales(){
         // Restar un turno a las piedras temporales
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (piedrasState[i][j] instanceof PiedraTemporal) {
                     PiedraTemporal piedraTemporal = (PiedraTemporal) piedrasState[i][j];
                     piedraTemporal.disminuirTurno();
@@ -111,8 +180,8 @@ public class Board {
 
     public int checkWinner() {
         // Implementa la lógica para verificar las filas
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize - 4; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size - 4; j++) {
                 int sumaJugador1 = 0;
                 int sumaJugador2 = 0;
 
@@ -134,8 +203,8 @@ public class Board {
         }
 
         // Implementa la lógica para verificar las columnas
-        for (int i = 0; i < boardSize - 4; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size - 4; i++) {
+            for (int j = 0; j < size; j++) {
                 int sumaJugador1 = 0;
                 int sumaJugador2 = 0;
 
@@ -157,8 +226,8 @@ public class Board {
         }
 
         // Implementa la lógica para verificar las diagonales
-        for (int i = 0; i < boardSize - 4; i++) {
-            for (int j = 0; j < boardSize - 4; j++) {
+        for (int i = 0; i < size - 4; i++) {
+            for (int j = 0; j < size - 4; j++) {
                 int sumaJugador1 = 0;
                 int sumaJugador2 = 0;
 
@@ -213,8 +282,8 @@ public class Board {
 
     public void printBoard() {
         System.out.println("Matriz de estado de juego");
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 System.out.print(boardState[i][j] + " ");
             }
             System.out.println();
@@ -223,8 +292,8 @@ public class Board {
 
     public void imprimirPiedrasState() {
         System.out.println("Matriz de piedrasState:");
-        for (int i = 0; i < boardSize; i++) {
-            for (int j = 0; j < boardSize; j++) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 if (piedrasState[i][j] != null) {
                     System.out.print(piedrasState[i][j].getTipo() + " ");
                 } else {
