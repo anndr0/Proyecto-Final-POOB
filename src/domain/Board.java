@@ -11,7 +11,7 @@ public class Board {
         this.size = size;
         piedrasState = new Piedra[this.size][this.size];
         casillasEspeciales = new Casilla[this.size][this.size];
-//        inicializarCasillasEspecialesAleatorias(0.5);
+        inicializarCasillasEspecialesAleatorias(0.5);
     }
 
     public Piedra[][] getBoardState() {
@@ -57,11 +57,25 @@ public class Board {
     }
 
     public void printCasillasEspeciales() {
-        System.out.println("Matriz de Casillas Especiales:");
+        System.out.print("    ");
+        for (int i = 1; i <= size; i++) {
+            System.out.printf("%-3d", i);
+        }
+        System.out.println();
+
         for (int i = 0; i < size; i++) {
+            System.out.printf("%-3d ", i + 1);
             for (int j = 0; j < size; j++) {
                 if (casillasEspeciales[i][j] != null) {
-                    System.out.print(casillasEspeciales[i][j].getClass().getSimpleName() + " ");
+                    if (casillasEspeciales[i][j] instanceof CasillaNormal) {
+                        System.out.print("N  ");
+                    } else if (casillasEspeciales[i][j] instanceof CasillaMina) {
+                        System.out.print("M  ");
+                    } else if (casillasEspeciales[i][j] instanceof CasillaTeleport) {
+                        System.out.print("T  ");
+                    } else if (casillasEspeciales[i][j] instanceof CasillaGolden) {
+                        System.out.print("G  ");
+                    }
                 } else {
                     System.out.print("null ");
                 }
@@ -69,6 +83,7 @@ public class Board {
             System.out.println();
         }
     }
+
 
     public boolean isBoardFull() {
         for (int i = 0; i < size; i++) {

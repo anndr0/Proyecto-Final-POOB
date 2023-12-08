@@ -39,6 +39,7 @@ public class Gomoku {
     public void resetGame() {
         board.resetBoard();
         currentPlayerIndex = 0;
+        setTurnoPiedraNormal(-1);
     }
 
     public Player getPlayerByNumber(int playerNumber) {
@@ -133,9 +134,8 @@ public class Gomoku {
 
             int winner = board.checkWinner();
 
-//            System.out.println(winner == 0 && currentPlayerIndex != turnoPiedraNormal);
-            System.out.println(currentPlayerIndex);
-            System.out.println(turnoPiedraNormal);
+            System.out.println("current player index "+currentPlayerIndex);
+            System.out.println("turno piedra normal "+turnoPiedraNormal);
             if (golden && currentPlayerIndex == turnoPiedraNormal){
                 System.out.println(currentPlayerIndex);
                 System.out.println(turnoPiedraNormal);
