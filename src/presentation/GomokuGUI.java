@@ -593,7 +593,7 @@ public class GomokuGUI extends JFrame {
 
         int winner = gomoku.checkWinner();
         if (winner != 0) {
-            String winnerName = (gomoku.getCurrentPlayerIndex() == 1) ? player2Name : player1Name;
+            String winnerName = (gomoku.getCurrentPlayerIndex() == 1) ?  player1Name : player2Name;
             GanadorGUI winnerP = new GanadorGUI(winnerName);
             winnerP.setVisible(true);
             winnerBoard(winner);

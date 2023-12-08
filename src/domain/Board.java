@@ -11,7 +11,7 @@ public class Board {
         this.size = size;
         piedrasState = new Piedra[this.size][this.size];
         casillasEspeciales = new Casilla[this.size][this.size];
-        inicializarCasillasEspecialesAleatorias(0.5);
+//        inicializarCasillasEspecialesAleatorias(0.5);
     }
 
     public Piedra[][] getBoardState() {

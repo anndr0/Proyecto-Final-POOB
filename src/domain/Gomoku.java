@@ -6,7 +6,7 @@ public class Gomoku {
     private Player[] players;
     private int currentPlayerIndex;
     private int size;
-    private int turnoPiedraNormal;
+    private int turnoPiedraNormal = -1;
 
     public Gomoku(int size) {
         this.size = size;
@@ -133,9 +133,12 @@ public class Gomoku {
 
             int winner = board.checkWinner();
 
-            System.out.println(winner == 0 && currentPlayerIndex != turnoPiedraNormal);
-
-            if (golden == true){
+//            System.out.println(winner == 0 && currentPlayerIndex != turnoPiedraNormal);
+            System.out.println(currentPlayerIndex);
+            System.out.println(turnoPiedraNormal);
+            if (golden && currentPlayerIndex == turnoPiedraNormal){
+                System.out.println(currentPlayerIndex);
+                System.out.println(turnoPiedraNormal);
                 currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
                 golden = false;
             } else {
@@ -145,10 +148,6 @@ public class Gomoku {
                     turnoPiedraNormal = -1;
                 }
             }
-
-
-//            System.out.println(currentPlayerIndex +"   "+ turnoPiedraNormal);
-
         } else {
             System.out.println("Player does not have the selected piece.");
         }
