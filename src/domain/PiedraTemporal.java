@@ -1,11 +1,10 @@
-// En la clase PiedraTemporal
 package domain;
 
 public class PiedraTemporal extends Piedra {
     private int turnosRestantes;
 
-    public PiedraTemporal(int tipo) {
-        super(tipo, 1);
+    public PiedraTemporal(int jugador) {
+        super(jugador, 1);
         this.turnosRestantes = 7;
     }
 
@@ -16,4 +15,10 @@ public class PiedraTemporal extends Piedra {
     public void disminuirTurno() {
         turnosRestantes--;
     }
+
+    @Override
+    public int getTipoPiedra() {
+        return 3;
+    }
 }
+

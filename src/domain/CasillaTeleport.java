@@ -12,14 +12,12 @@ public class CasillaTeleport extends Casilla {
         do {
             newRow = random.nextInt(board.getSize());
             newCol = random.nextInt(board.getSize());
-        } while (board.getBoardState()[newRow][newCol] != 0);
+        } while (board.getPiedrasState()[newRow][newCol] != null);
 
         // Mueve la piedra a la nueva posición
-        board.getBoardState()[newRow][newCol] = board.getBoardState()[row][col];
         board.getPiedrasState()[newRow][newCol] = board.getPiedrasState()[row][col];
 
         // Elimina la piedra original asignando 0 en su posición original
-        board.getBoardState()[row][col] = 0;
         board.getPiedrasState()[row][col] = null;
     }
 }

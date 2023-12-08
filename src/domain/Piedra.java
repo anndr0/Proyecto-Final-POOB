@@ -1,21 +1,24 @@
 package domain;
 
 public abstract class Piedra {
-    protected int tipo;
+    protected int jugador; // Nuevo atributo
     protected int valor; // Nuevo atributo
 
-    public Piedra(int tipo, int valor) {
-        this.tipo = tipo;
+    public Piedra(int jugador, int valor) {
+        this.jugador = jugador;
         this.valor = valor;
     }
 
-    public int getTipo() {
-        return tipo;
+    public int getJugador() {
+        return jugador;
     }
 
     public int getValor() {
         return valor;
     }
+
+    public abstract int getTipoPiedra();
 }
+
 
 

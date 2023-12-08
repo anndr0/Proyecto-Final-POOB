@@ -1,23 +1,22 @@
 package domain;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 public class Gomoku {
     private Board board;
     private Player[] players;
     private int currentPlayerIndex;
     private int size;
-
+    private int turnoPiedraNormal;
 
     public Gomoku(int size) {
         this.size = size;
         board = new Board(size);
-        players = new Player[]{new HumanPlayer(1), new HumanPlayer(2)};
-//        inicializarCasillasEspeciales();
+        players = new Player[]{new HumanPlayer(1, size), new HumanPlayer(2, size)};
         currentPlayerIndex = 0;
+    }
+
+    public Player[] getPlayers() {
+        return players;
     }
 
     public Board getBoard() {
@@ -26,26 +25,35 @@ public class Gomoku {
     public int getSize() {
         return size;
     }
-    public void reiniciarFichas() {
+    public void reiniciarFichas(int size, double porcentajeEspeciales) {
         for (Player player : players) {
-            player.reiniciarFichas();
+            player.reiniciarPiedras(size, porcentajeEspeciales);
         }
+    }
+    public void reiniciarCasillas(double porcentajeEspeciales){
+        board.reiniciarCasillas(porcentajeEspeciales);
+    }
+    public Piedra[][] getBoardState() {
+        return board.getBoardState();
     }
     public void resetGame() {
         board.resetBoard();
-//        currentPlayerIndex = 0;
+        currentPlayerIndex = 0;
+    }
+
+    public Player getPlayerByNumber(int playerNumber) {
+        for (Player player : players) {
+            if (player.getPlayerNumber() == playerNumber) {
+                return player;
+            }
+        }
+        return null;  // Retorna null si no se encuentra el jugador
     }
 
     public int checkWinner() {
         return board.checkWinner();
     }
 
-    public int[][] getBoardState() {
-        return board.getBoardState();
-    }
-    public Casilla[][] getCasillasState() {
-        return board.getCasillasEspeciales();
-    }
     public boolean isBoardFull() {
         return board.isBoardFull();
     }
@@ -54,53 +62,95 @@ public class Gomoku {
         if (isBoardFull()) {
             int middleRow = size / 2;
 
+            Player player1 = players[0];
+            Player player2 = players[1];
+
             for (int i = 0; i < middleRow; i++) {
                 for (int j = 0; j < size; j++) {
-                    board.makeMove(i, j, 1);
+                    Piedra piedra = player1.getPiedras().get(0); // Obtén la primera piedra del jugador 1
+                    board.makeMove(i, j, piedra);
+                    player1.getPiedras().remove(piedra);
                 }
             }
+
             for (int i = middleRow; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    board.makeMove(i, j, 2);
+                    Piedra piedra = player2.getPiedras().get(0); // Obtén la primera piedra del jugador 2
+                    board.makeMove(i, j, piedra);
+                    player2.getPiedras().remove(piedra);
                 }
             }
         }
     }
-    // Métodos para contar las fichas de cada tipo para el jugador específico (por número de jugador)
-    public int contarFichasNormalesPorJugador(int playerNumber) {
-        return players[playerNumber - 1].contarFichasNormales();
+    public boolean isSpecialCell(int row, int col, String cellType) {
+        switch (cellType) {
+            case "Mine":
+                return board.isMine(row, col);
+            case "Tel":
+                return board.isTel(row, col);
+            case "Golden":
+                return board.isGolden(row, col);
+            default:
+                return false;
+        }
+    }
+    private boolean golden;
+
+    public int getTurnoPiedraNormal(){
+        return turnoPiedraNormal;
+    }
+    public void setTurnoPiedraNormal(int value){
+        turnoPiedraNormal =value;
+    }
+    public void handleGoldenCell(int row, int col) {
+        if (board.isGolden(row, col)) {
+            Player currentPlayer = players[currentPlayerIndex];
+            Piedra piedraObtenida = currentPlayer.sumarFichaAleatoria();
+            if (piedraObtenida instanceof PiedraNormal) {
+                wasGolden(true);
+                turnoPiedraNormal = currentPlayerIndex;
+            }
+        }
     }
 
-    public int contarFichasPesadasPorJugador(int playerNumber) {
-        return players[playerNumber - 1].contarFichasPesadas();
-    }
 
-    public int contarFichasTemporalesPorJugador(int playerNumber) {
-        return players[playerNumber - 1].contarFichasTemporales();
-    }
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
 
-    public void makeMove(int row, int col, int selectedPieceType) {
+    public boolean wasGolden(boolean was){
+        golden = was;
+        return golden;
+    }
+    public void makeMove(int row, int col, Piedra selectedPiedra) {
         Player currentPlayer = players[currentPlayerIndex];
 
-        if (currentPlayer.hasPieceOfType(selectedPieceType)) {
-            board.makeMove(row, col, selectedPieceType);
-            currentPlayer.removePiece(selectedPieceType);
+        if (currentPlayer.getPiedras().contains(selectedPiedra)) {
+            board.makeMove(row, col, selectedPiedra);
+            currentPlayer.removePiece(selectedPiedra);
+
+            System.out.println(currentPlayer.contarFichasPorTipo());
 
             int winner = board.checkWinner();
-            if (winner != 0) {
-                System.out.println("Player " + winner + " wins!");
-            } else {
+
+            System.out.println(winner == 0 && currentPlayerIndex != turnoPiedraNormal);
+
+            if (golden == true){
                 currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                golden = false;
+            } else {
+                if (winner == 0 && currentPlayerIndex != turnoPiedraNormal) {
+                    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+                } else {
+                    turnoPiedraNormal = -1;
+                }
             }
+
+
+//            System.out.println(currentPlayerIndex +"   "+ turnoPiedraNormal);
+
         } else {
-            System.out.println("Player does not have the selected piece type.");
+            System.out.println("Player does not have the selected piece.");
         }
     }
-    public boolean isMine(int row, int col) {
-        return board.isMine(row, col);
-    }
-
 }

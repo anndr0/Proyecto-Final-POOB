@@ -2,8 +2,8 @@ package domain;
 
 
 public class HumanPlayer extends Player {
-    public HumanPlayer(int playerNumber) {
-        super(playerNumber);
+    public HumanPlayer(int playerNumber, int boardSize) {
+        super(playerNumber, boardSize);
     }
 
 //    @Override
@@ -21,12 +21,18 @@ public class HumanPlayer extends Player {
 //    }
 
 
-    public boolean hasPieceOfType(int pieceType) {
-        return fichas.contains(pieceType);
+    @Override
+    public boolean hasPieceOfType(Class<?> clasePiedra) {
+        for (Piedra piedra : piedras) {
+            if (clasePiedra.isInstance(piedra)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void removePiece(int pieceType) {
-        fichas.remove(Integer.valueOf(pieceType));
+    @Override
+    public void removePiece(Piedra piedraToRemove) {
+        piedras.remove(piedraToRemove);
     }
-
 }

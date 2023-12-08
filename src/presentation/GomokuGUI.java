@@ -1,6 +1,7 @@
 package presentation;
 
-import domain.Gomoku;
+import domain.*;
+
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,13 +9,15 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 public class GomokuGUI extends JFrame {
     private Gomoku gomoku;
     private JPanel[][] boardPanels;
-    private int currentPlayerTurn = 1 ;
+    private int currentPlayerTurn=1;
 
-    private int selectedPieceType;
+    private Piedra selectedPieceType;
 
 
 
@@ -35,7 +38,7 @@ public class GomokuGUI extends JFrame {
     private Color normal1Color, normal2Color, pesada1Color,pesada2Color,temp1Color,temp2Color;
 
 
-    public GomokuGUI(String player1Name, String player2Name, Color normal1Color,Color normal2Color,Color pesada1Color, Color pesada2Color,Color temp1Color,Color temp2Color ) {
+    public GomokuGUI(int size, String player1Name, String player2Name, Color normal1Color,Color normal2Color,Color pesada1Color, Color pesada2Color,Color temp1Color,Color temp2Color ) {
         this.player1Name = player1Name;
         this.player2Name = player2Name;
 
@@ -46,6 +49,7 @@ public class GomokuGUI extends JFrame {
         this.temp1Color = temp1Color; playersColors[4] = temp1Color;
         this.temp2Color = temp2Color; playersColors[5] = temp2Color;
 
+        this.boardPanelSize[0] = size;
 
         setTitle("Gomoku POOs");
         boardPanels = new JPanel[boardPanelSize[0]][boardPanelSize[0]];
@@ -54,19 +58,26 @@ public class GomokuGUI extends JFrame {
         prepareActions();
     }
 
-    public int getSelectedPieceType() {
+    public Piedra getSelectedPieceType() {
         return selectedPieceType;
     }
 
+
     private void prepareElements() {
-        int width = 950;
-        int height = 850;
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+        int width = (int) (screenSize.getWidth() * 0.5);
+        int height = (int) (screenSize.getHeight() * 0.8);
+
         setSize(width, height);
+
         setLocationRelativeTo(null);
         setResizable(false);
+
         prepareElementsMenu();
         prepareElementsBoard();
     }
+
 
     private void prepareActions() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -139,13 +150,14 @@ public class GomokuGUI extends JFrame {
             }
         }
     }
-
     private void optionNew() {
         int option = JOptionPane.showConfirmDialog(null, "¿Quieres empezar un nuevo juego?", "Nuevo juego", JOptionPane.YES_NO_OPTION);
         if (option == JOptionPane.YES_OPTION) {
             resetBoard();
             resetNumbers();
+            resetBox();
             disableClickListeners();
+            currentPlayerTurn = 0;
         }
     }
     private void resetBoard() {
@@ -161,10 +173,13 @@ public class GomokuGUI extends JFrame {
     }
 
     private void resetNumbers() {
-        gomoku.reiniciarFichas();
+        gomoku.reiniciarFichas(boardPanelSize[0], 0.25);
         updatePieceNumbers();
     }
 
+    private  void resetBox(){
+        gomoku.reiniciarCasillas(0.2);
+    }
 
     public void disableClickListeners() {
         for (int i = 0; i < boardPanelSize[0]; i++) {
@@ -219,7 +234,7 @@ public class GomokuGUI extends JFrame {
     }
 
     private JPanel createVerticalContainer1(String title, Color normalColor, Color pesadaColor, Color tempColor) {
-        verticalContainer = new JPanel();
+        JPanel verticalContainer = new JPanel(); // Instancia local para createVerticalContainer1
         verticalContainer.setLayout(new BoxLayout(verticalContainer, BoxLayout.Y_AXIS));
 
         JPanel topPanel = new JPanel();
@@ -249,7 +264,7 @@ public class GomokuGUI extends JFrame {
         topPanel.add(createTitleRow(new String[]{"Normal", "Pesada", "Temporal"}, Color.BLACK));
 
         topPanel.add(createCircleRowJ1(normalColor, pesadaColor,  tempColor));
-        topPanel.add(numberPieces(currentPlayerTurn,Color.BLACK));
+        topPanel.add(numberPieces(0,Color.BLACK));
 
         verticalContainer.add(topPanel);
         verticalContainer.setBackground(Color.WHITE);
@@ -258,7 +273,7 @@ public class GomokuGUI extends JFrame {
     }
 
     private JPanel createVerticalContainer2(String title, Color normalColor, Color pesadaColor, Color tempColor) {
-        verticalContainer = new JPanel();
+        JPanel verticalContainer = new JPanel();
         verticalContainer.setLayout(new BoxLayout(verticalContainer, BoxLayout.Y_AXIS));
 
         JPanel topPanel = new JPanel();
@@ -284,11 +299,10 @@ public class GomokuGUI extends JFrame {
         topPanel.add(titleLabel);
         topPanel.setBackground(Color.BLACK);
 
-//        topPanel.add(Box.createVerticalStrut(20));
         topPanel.add(createTitleRow(new String[]{"Normal", "Pesada", "Temporal"}, Color.WHITE));
 
         topPanel.add(createCircleRowJ2(normalColor, pesadaColor, tempColor));
-        topPanel.add(numberPieces(currentPlayerTurn, Color.WHITE));
+        topPanel.add(numberPieces(1, Color.WHITE));
 
         verticalContainer.add(topPanel);
         verticalContainer.setBackground(Color.WHITE);
@@ -297,26 +311,30 @@ public class GomokuGUI extends JFrame {
     }
 
 
-    private JPanel createCircleRow(Color normalColor, Color pesadaColor, Color tempColor, int normalType, int pesadaType, int tempType) {
+    private JPanel createCircleRow(Color normalColor, Color pesadaColor, Color tempColor) {
         JPanel circleRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         circleRow.setOpaque(false);
 
-        PiecePanel normalCirclePanel = createPiecePanel(normalColor, normalType);
+        PiecePanel normalCirclePanel = createPiecePanel(normalColor, PiedraNormal.class);
         circleRow.add(normalCirclePanel);
-        PiecePanel pesadaCirclePanel = createPiecePanel(pesadaColor, pesadaType);
+        PiecePanel pesadaCirclePanel = createPiecePanel(pesadaColor, PiedraPesada.class);
         circleRow.add(pesadaCirclePanel);
-        PiecePanel tempCirclePanel = createPiecePanel(tempColor, tempType);
+        PiecePanel tempCirclePanel = createPiecePanel(tempColor, PiedraTemporal.class);
         circleRow.add(tempCirclePanel);
 
         return circleRow;
     }
 
-    private PiecePanel createPiecePanel(Color circleColor, int pieceType) {
+
+
+    private PiecePanel createPiecePanel(Color circleColor, Class<?> pieceType) {
         PiecePanel circlePanel = new PiecePanel(circleColor);
         circlePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                selectedPieceType = pieceType;
+
+                selectedPieceType = gomoku.getPlayers()[gomoku.getCurrentPlayerIndex()].ObtenerPiedra(pieceType);
+
             }
         });
         circlePanel.setPreferredSize(new Dimension(40, 40));
@@ -326,26 +344,27 @@ public class GomokuGUI extends JFrame {
     }
 
     private JPanel createCircleRowJ1(Color normalColor, Color pesadaColor, Color tempColor) {
-        return createCircleRow(normalColor, pesadaColor, tempColor, 1, 3, 5);
+        return createCircleRow(normalColor, pesadaColor, tempColor);
     }
 
     private JPanel createCircleRowJ2(Color normalColor, Color pesadaColor, Color tempColor) {
-        return createCircleRow(normalColor, pesadaColor, tempColor, 2, 4, 6);
+        return createCircleRow(normalColor, pesadaColor, tempColor);
     }
 
     private JPanel numberPieces(int player, Color color) {
         JPanel numberRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         numberRow.setOpaque(false);
 
-        int[] types = {
-                gomoku.contarFichasNormalesPorJugador(player),
-                gomoku.contarFichasPesadasPorJugador(player),
-                gomoku.contarFichasTemporalesPorJugador(player)
-        };
+        // Obtener el contador de fichas por tipo
+        HashMap<String, Integer> contadorFichas = gomoku.getPlayers()[player].contarFichasPorTipo();
 
-        for (int i = 0; i < 3; i++) {
-            int type = types[i];
-            JLabel numeros = new JLabel("  " + String.valueOf(type));
+        // Ordenar los tipos de fichas
+        List<String> tiposOrdenados = Arrays.asList("Normal", "Pesada", "Temporal");
+
+        // Crear etiquetas para cada tipo de ficha en el orden especificado
+        for (String tipo : tiposOrdenados) {
+            int cantidad = contadorFichas.getOrDefault(tipo, 0);
+            JLabel numeros = new JLabel("  " + String.valueOf(cantidad));
             try {
                 Font customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./fuente/LEMONMILK-Medium.otf")).deriveFont(12f);
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -357,19 +376,18 @@ public class GomokuGUI extends JFrame {
             numeros.setForeground(color);
             numeros.setPreferredSize(new Dimension(30, 30));
             numeros.setOpaque(false);
-            numeros.setLayout(new BorderLayout());
             numberRow.add(numeros);
         }
+
         return numberRow;
     }
 
-
     private void updatePieceNumbers() {
-        updateNumberRow(verticalContainer1, 1, Color.BLACK);
-        updateNumberRow(verticalContainer2, 2, Color.WHITE);
+        updateNumberRow(verticalContainer1, 0, Color.BLACK, 0);
+        updateNumberRow(verticalContainer2, 1, Color.WHITE, 1);
     }
 
-    private void updateNumberRow(JPanel existingContainer, int player, Color color) {
+    private void updateNumberRow(JPanel existingContainer, int player, Color color, int delta) {
         if (existingContainer != null) {
             Component[] components = existingContainer.getComponents();
 
@@ -377,8 +395,8 @@ public class GomokuGUI extends JFrame {
                 JPanel topPanel = (JPanel) components[0];
                 Component[] topComponents = topPanel.getComponents();
 
-                if (topComponents.length >= 6 && topComponents[5] instanceof JPanel) {
-                    JPanel existingNumbersRow = (JPanel) topComponents[5];
+                if (topComponents.length >= (6 - delta) && topComponents[5 - delta] instanceof JPanel) {
+                    JPanel existingNumbersRow = (JPanel) topComponents[5 - delta];
                     existingNumbersRow.removeAll();
 
                     JPanel newNumberRow = numberPieces(player, color);
@@ -393,16 +411,14 @@ public class GomokuGUI extends JFrame {
         }
     }
 
-
     private void updateBoardView() {
-        int[][] boardState = gomoku.getBoardState();
+        Piedra[][] boardState = gomoku.getBoardState();
         for (int i = 0; i < boardPanelSize[0]; i++) {
             for (int j = 0; j < boardPanelSize[0]; j++) {
-                if (boardState[i][j] != 0) {
-                    PiecePanel piecePanel = new PiecePanel(playersColors[boardState[i][j] - 1]);
-//                    SpecialPiecePanel special = new SpecialPiecePanel(Color.red);
+                if (boardState[i][j] != null) {
+                    Color piedraColor = obtenerColorDePiedra(boardState[i][j]);
+                    PiecePanel piecePanel = new PiecePanel(piedraColor);
                     boardPanels[i][j].removeAll();
-//                    boardPanels[i][j].add(special);
                     boardPanels[i][j].add(piecePanel);
                 }else {
                     boardPanels[i][j].removeAll();
@@ -412,6 +428,30 @@ public class GomokuGUI extends JFrame {
         }
         repaint();
     }
+
+    private Color obtenerColorDePiedra(Piedra piedra) {
+        int jugador = piedra.getJugador();
+
+        if (jugador == 1) {
+            if (piedra instanceof PiedraNormal) {
+                return playersColors[0];
+            } else if (piedra instanceof PiedraPesada) {
+                return playersColors[2];
+            } else if (piedra instanceof PiedraTemporal) {
+                return playersColors[4];
+            }
+        } else if (jugador == 2) {
+            if (piedra instanceof PiedraNormal) {
+                return playersColors[1];
+            } else if (piedra instanceof PiedraPesada) {
+                return playersColors[3];
+            } else if (piedra instanceof PiedraTemporal) {
+                return playersColors[5];
+            }
+        }
+        return Color.GRAY;
+    }
+
 
 
     private JPanel createTitleRow(String[] circleTypes, Color color) {
@@ -535,16 +575,25 @@ public class GomokuGUI extends JFrame {
         }
     }
 
-    public void handlePieceClick(int row, int col, int selectedPieceType) {
+    public void handlePieceClick(int row, int col, Piedra selectedPieceType) {
+
+
+        if (gomoku.isSpecialCell(row, col, "Mine")){
+            JOptionPane.showMessageDialog(this, "¡Cuidado! Caíste en una mina.");
+        } else if (gomoku.isSpecialCell(row, col, "Tel")) {
+            JOptionPane.showMessageDialog(this, "¡Cuidado! Tu ficha se teletransportó.");
+        } else if (gomoku.isSpecialCell(row, col, "Golden")) {
+            JOptionPane.showMessageDialog(this, "¡Caiste en una casilla golden! Tu regalo es una nueva ficha.");
+            gomoku.handleGoldenCell(row,col);
+        }
         gomoku.makeMove(row, col, selectedPieceType);
-        currentPlayerTurn = (currentPlayerTurn == 1) ? 2 : 1;
 
         updateBoardView();
         updatePieceNumbers();
 
         int winner = gomoku.checkWinner();
         if (winner != 0) {
-            String winnerName = (currentPlayerTurn == 1) ? player1Name : player2Name;
+            String winnerName = (gomoku.getCurrentPlayerIndex() == 1) ? player2Name : player1Name;
             GanadorGUI winnerP = new GanadorGUI(winnerName);
             winnerP.setVisible(true);
             winnerBoard(winner);
@@ -557,7 +606,6 @@ public class GomokuGUI extends JFrame {
         revalidate();
         repaint();
     }
-
 
     private void handleTie() {
         gomoku.handleTie();
@@ -613,7 +661,6 @@ public class GomokuGUI extends JFrame {
         disableClickListeners();
     }
 
-
     private void openFile() {
         JFileChooser fileChooser = new JFileChooser();
         int returnValue = fileChooser.showOpenDialog(null);
@@ -624,7 +671,7 @@ public class GomokuGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        GomokuGUI window = new GomokuGUI("ANA","NAT", Color.BLACK, Color.WHITE,new Color(134, 1, 175, 255), new Color(167, 25, 75,255),new Color(2, 71, 254,255), new Color(3, 146, 206, 255) );
+        GomokuGUI window = new GomokuGUI(10,"ANA","NAT", Color.BLACK, Color.WHITE,new Color(134, 1, 175, 255), new Color(167, 25, 75,255),new Color(2, 71, 254,255), new Color(3, 146, 206, 255) );
         window.setVisible(true);
     }
 }

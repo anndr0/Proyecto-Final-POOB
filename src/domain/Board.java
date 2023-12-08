@@ -3,24 +3,29 @@ package domain;
 import java.util.Random;
 
 public class Board {
-    private int[][] boardState;
     private Casilla[][] casillasEspeciales;
     private Piedra[][] piedrasState;
     private int size;
 
     public Board(int size) {
         this.size = size;
-        boardState = new int[this.size][this.size];
         piedrasState = new Piedra[this.size][this.size];
         casillasEspeciales = new Casilla[this.size][this.size];
-        initializeBoard();
         inicializarCasillasEspecialesAleatorias(0.5);
+    }
 
+    public Piedra[][] getBoardState() {
+        return piedrasState;
     }
 
     public void setCasillaEspecial(int row, int col, Casilla casilla) {
         casillasEspeciales[row][col] = casilla;
     }
+    public Casilla[][] getCasillasEspeciales() {
+        return casillasEspeciales;
+    }
+
+
     public void inicializarCasillasEspecialesAleatorias(double porcentajeCasillasEspeciales) {
         Random random = new Random();
         int cantidadCasillasEspeciales = (int) (size * size * porcentajeCasillasEspeciales);
@@ -37,9 +42,9 @@ public class Board {
                         case 1:
                             casillasEspeciales[i][j] = new CasillaTeleport();
                             break;
-//                        case 2:
-//                            casillasEspeciales[i][j] = new CasillaGolden();
-//                            break;
+                        case 2:
+                            casillasEspeciales[i][j] = new CasillaGolden();
+                            break;
                     }
                     cantidadCasillasEspeciales--;
                 } else {
@@ -50,13 +55,6 @@ public class Board {
         }
         printCasillasEspeciales();
     }
-
-
-    public boolean isMine(int row, int col) {
-        Casilla casilla = casillasEspeciales[row][col];
-        return casilla instanceof CasillaMina;
-    }
-
 
     public void printCasillasEspeciales() {
         System.out.println("Matriz de Casillas Especiales:");
@@ -72,25 +70,10 @@ public class Board {
         }
     }
 
-    public void aplicarEfectoCasillaEspecial(int row, int col) {
-        Casilla casilla = casillasEspeciales[row][col];
-        if (casilla != null) {
-            casilla.aplicarEfecto(this, row, col);
-        }
-    }
-    private void initializeBoard() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                boardState[i][j] = 0;
-            }
-        }
-        printBoard();
-    }
-
     public boolean isBoardFull() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (boardState[i][j] == 0) {
+                if (piedrasState[i][j] == null) {
                     // Si alguna casilla está vacía, el tablero no está lleno
                     return false;
                 }
@@ -108,42 +91,60 @@ public class Board {
         }
     }
 
-    public void resetBoard() {
-        initializeBoard();
-        resetPiedrasState();
+    private void resetCasillasState() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                casillasEspeciales[i][j] = null;
+            }
+        }
     }
-    public int[][] getBoardState() {
-        return boardState;
+
+    public void resetBoard() {
+        resetPiedrasState();
+        resetCasillasState();
     }
     public Piedra[][] getPiedrasState() {
         return piedrasState;
     }
-    public Casilla[][] getCasillasEspeciales() {
-        return casillasEspeciales;
+    public void reiniciarCasillas(double porcentajeEspeciales) {
+        resetCasillasState();
+        reiniciarCasillasEspeciales(porcentajeEspeciales);
+    }
+
+    public void reiniciarCasillasEspeciales(double porcentaje) {
+        inicializarCasillasEspecialesAleatorias(porcentaje);
     }
 
     public int getSize(){
         return size;
     }
 
-    public void makeMove(int row, int col, int piedraType) {
-        if (boardState[row][col] == 0) {
-            Piedra piedra = crearPiedraSegunTipo(piedraType);
-            boardState[row][col] = piedraType;
+    public void makeMove(int row, int col, Piedra piedra) {
+
+        if (piedrasState[row][col] == null && piedra != null) {
             piedrasState[row][col] = piedra;
             disminuirTurnoTemporales();
-
-            printBoard();
             imprimirPiedrasState();
-            printCasillasEspeciales();
         }
         Casilla casillaEspecial = casillasEspeciales[row][col];
         if (casillaEspecial != null) {
             casillaEspecial.aplicarEfecto(this, row, col);
             casillasEspeciales[row][col] = new CasillaNormal();
         }
+        printCasillasEspeciales();
     }
-
+    public boolean isMine(int row, int col) {
+        Casilla casilla = casillasEspeciales[row][col];
+        return casilla instanceof CasillaMina;
+    }
+    public boolean isTel(int row, int col) {
+        Casilla casilla = casillasEspeciales[row][col];
+        return casilla instanceof CasillaTeleport;
+    }
+    public boolean isGolden(int row, int col) {
+        Casilla casilla = casillasEspeciales[row][col];
+        return casilla instanceof CasillaGolden;
+    }
 
     private void disminuirTurnoTemporales(){
         // Restar un turno a las piedras temporales
@@ -154,7 +155,6 @@ public class Board {
                     piedraTemporal.disminuirTurno();
                     if (piedraTemporal.getTurnosRestantes() == 0) {
                         // Si se han agotado los turnos, eliminar la piedra temporal
-                        boardState[i][j] = 0;
                         piedrasState[i][j] = null;
                     }
                 }
@@ -163,21 +163,6 @@ public class Board {
 
     }
 
-    private Piedra crearPiedraSegunTipo(int piedraType) {
-        switch (piedraType) {
-            case 1:
-            case 2:
-                return new PiedraNormal(piedraType);
-            case 3:
-            case 4:
-                return new PiedraPesada(piedraType);
-            case 5:
-            case 6:
-                return new PiedraTemporal(piedraType);
-            default:
-                throw new IllegalArgumentException("Tipo de piedra no válido: " + piedraType);
-        }
-    }
 
     public int checkWinner() {
         // Implementa la lógica para verificar las filas
@@ -187,11 +172,11 @@ public class Board {
                 int sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int tipo = boardState[i][j + k];
-                    if (tipo == 1 || tipo == 3 || tipo == 5) {
-                        sumaJugador1 += piedrasState[i][j + k].getValor();
-                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
-                        sumaJugador2 += piedrasState[i][j + k].getValor();
+                    Piedra piedra = piedrasState[i][j + k];
+                    if (piedra != null && piedra.getJugador() == 1) {
+                        sumaJugador1 += piedra.getValor();
+                    } else if (piedra != null && piedra.getJugador() == 2) {
+                        sumaJugador2 += piedra.getValor();
                     }
                 }
 
@@ -210,11 +195,11 @@ public class Board {
                 int sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int tipo = boardState[i + k][j];
-                    if (tipo == 1 || tipo == 3 || tipo == 5) {
-                        sumaJugador1 += piedrasState[i + k][j].getValor();
-                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
-                        sumaJugador2 += piedrasState[i + k][j].getValor();
+                    Piedra piedra = piedrasState[i + k][j];
+                    if (piedra != null && piedra.getJugador() == 1) {
+                        sumaJugador1 += piedra.getValor();
+                    } else if (piedra != null && piedra.getJugador() == 2) {
+                        sumaJugador2 += piedra.getValor();
                     }
                 }
 
@@ -225,7 +210,6 @@ public class Board {
                 }
             }
         }
-
         // Implementa la lógica para verificar las diagonales
         for (int i = 0; i < size - 4; i++) {
             for (int j = 0; j < size - 4; j++) {
@@ -233,11 +217,11 @@ public class Board {
                 int sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int tipo = boardState[i + k][j + k];
-                    if (tipo == 1 || tipo == 3 || tipo == 5) {
-                        sumaJugador1 += piedrasState[i + k][j + k].getValor();
-                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
-                        sumaJugador2 += piedrasState[i + k][j + k].getValor();
+                    Piedra piedra = piedrasState[i + k][j + k];
+                    if (piedra != null && piedra.getJugador() == 1) {
+                        sumaJugador1 += piedra.getValor();
+                    } else if (piedra != null && piedra.getJugador() == 2) {
+                        sumaJugador2 += piedra.getValor();
                     }
                 }
 
@@ -251,11 +235,11 @@ public class Board {
                 sumaJugador2 = 0;
 
                 for (int k = 0; k < 5; k++) {
-                    int tipo = boardState[i + 4 - k][j + k];
-                    if (tipo == 1 || tipo == 3 || tipo == 5) {
-                        sumaJugador1 += piedrasState[i + 4 - k][j + k].getValor();
-                    } else if (tipo == 2 || tipo == 4 || tipo == 6) {
-                        sumaJugador2 += piedrasState[i + 4 - k][j + k].getValor();
+                    Piedra piedra = piedrasState[i + 4 - k][j + k];
+                    if (piedra != null && piedra.getJugador() == 1) {
+                        sumaJugador1 += piedra.getValor();
+                    } else if (piedra != null && piedra.getJugador() == 2) {
+                        sumaJugador2 += piedra.getValor();
                     }
                 }
 
@@ -269,26 +253,9 @@ public class Board {
         return 0;
     }
 
-
-    private int getPlayerNumberFromPiedra(Piedra piedra) {
-        return piedra != null ? piedra.getTipo() : 0;
-    }
-
-
-
     public int convertCoordinatesToIndex(int row, int col) {
         // Convertir las coordenadas de fila y columna a un índice único
         return row * 15 + col;
-    }
-
-    public void printBoard() {
-        System.out.println("Matriz de estado de juego");
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                System.out.print(boardState[i][j] + " ");
-            }
-            System.out.println();
-        }
     }
 
     public void imprimirPiedrasState() {
@@ -296,7 +263,7 @@ public class Board {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (piedrasState[i][j] != null) {
-                    System.out.print(piedrasState[i][j].getTipo() + " ");
+                    System.out.print(piedrasState[i][j].getJugador() + " ");
                 } else {
                     System.out.print("0 ");
                 }

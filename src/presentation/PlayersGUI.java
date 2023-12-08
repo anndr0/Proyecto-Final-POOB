@@ -49,19 +49,23 @@ public class PlayersGUI extends JFrame{
 
         JLabel player1Label = new JLabel("PLAYER 1");
         JLabel player2Label = new JLabel("PLAYER 2");
+        JLabel dimensionsLabel = new JLabel("DIMENSIONS");
         player1Label.setFont(new Font("Center Baseline", Font.CENTER_BASELINE, 15));
         player2Label.setFont(new Font("Center Baseline", Font.CENTER_BASELINE, 15));
+        dimensionsLabel.setFont(new Font("Center Baseline", Font.CENTER_BASELINE, 15));
 
         player1Label.setForeground(Color.BLACK);
         player2Label.setForeground(Color.BLACK);
-
+        dimensionsLabel.setForeground(Color.BLACK);
 
         RoundTextField p1TextField = new RoundTextField(" ");
         RoundTextField p2TextField = new RoundTextField(" ");
+        RoundTextField dimensionesT = new RoundTextField(" ");
 
         Dimension textFieldSize = new Dimension(180, 30);
         p1TextField.setPreferredSize(textFieldSize);
         p2TextField.setPreferredSize(textFieldSize);
+        dimensionesT.setPreferredSize(new Dimension(60,30));
 
 
         RoundButton continueButton = new RoundButton("CONTINUE");
@@ -84,6 +88,7 @@ public class PlayersGUI extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 String player1Name = p1TextField.getText().trim();
                 String player2Name = p2TextField.getText().trim();
+                String dimensiones = dimensionesT.getText().trim();
 
                 // Verificar que hay contenido en las cajas de texto
                 if (player1Name.isEmpty() || player2Name.isEmpty()) {
@@ -122,7 +127,7 @@ public class PlayersGUI extends JFrame{
                 }
 
                 dispose();
-                continuar(player1Name, player2Name, normalColorP1, normalColorP2, pesadaColorP1, pesadaColorP2, tempColorP1, tempColorP2);
+                continuar(Integer.parseInt(dimensiones), player1Name, player2Name, normalColorP1, normalColorP2, pesadaColorP1, pesadaColorP2, tempColorP1, tempColorP2);
             }
         });
 
@@ -197,9 +202,21 @@ public class PlayersGUI extends JFrame{
         gbc.fill = GridBagConstraints.CENTER;
         outerPanel.add(tempColorButtonP2, gbc);
 
-        gbc.insets = new Insets(20, 0, 10, -50);
         gbc.gridx = 0;
         gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.CENTER;
+        outerPanel.add(dimensionsLabel, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.CENTER;
+        outerPanel.add(dimensionesT, gbc);
+
+        gbc.insets = new Insets(20, 0, 10, -50);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.CENTER;
         outerPanel.add(continueButton, gbc);
@@ -213,8 +230,8 @@ public class PlayersGUI extends JFrame{
         inicio.setVisible(true);
     }
 
-    private void continuar(String player1Name, String player2Name, Color normal1Color,Color normal2Color,Color pesada1Color, Color pesada2Color,Color temp1Color,Color temp2Color ) {
-        GomokuGUI inicio = new GomokuGUI(player1Name, player2Name, normal1Color, normal2Color, pesada1Color, pesada2Color,temp1Color,temp2Color);
+    private void continuar(int size, String player1Name, String player2Name, Color normal1Color,Color normal2Color,Color pesada1Color, Color pesada2Color,Color temp1Color,Color temp2Color ) {
+        GomokuGUI inicio = new GomokuGUI(size, player1Name, player2Name, normal1Color, normal2Color, pesada1Color, pesada2Color,temp1Color,temp2Color);
         inicio.setVisible(true);
     }
     private JLabel createCenterTitleLabel() {

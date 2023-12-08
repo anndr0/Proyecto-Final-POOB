@@ -3,8 +3,8 @@ package domain;
 import java.util.Random;
 
 public class ComputerPlayer extends Player {
-    public ComputerPlayer(int playerNumber) {
-        super(playerNumber);
+    public ComputerPlayer(int playerNumber, int boardSize) {
+        super(playerNumber, boardSize);
     }
 
 //    @Override
@@ -33,12 +33,18 @@ public class ComputerPlayer extends Player {
 //        return tipo;
 //    }
 
-    public boolean hasPieceOfType(int pieceType) {
-        return fichas.contains(pieceType);
+    public boolean hasPieceOfType(Class<?> clasePiedra) {
+        for (Piedra piedra : piedras) {
+            if (clasePiedra.isInstance(piedra)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void removePiece(int pieceType) {
-        fichas.remove(Integer.valueOf(pieceType));
+    @Override
+    public void removePiece(Piedra piedraToRemove) {
+        piedras.remove(piedraToRemove);
     }
 
 }

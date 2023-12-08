@@ -3,32 +3,42 @@ package domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.HashMap;
-import java.util.Map;
 
 public abstract class Player {
     protected int playerNumber;
-    protected List<Integer> fichas;
+    protected ArrayList<Piedra> piedras;
     protected long tiempoInvertido;
+    private boolean nextTurnNormal = false;
+
     protected int puntaje;
     protected int row;
     protected int col;
 
-    public Player(int playerNumber) {
+    public Player(int playerNumber, int boardSize) {
         this.playerNumber = playerNumber;
-        this.fichas = new ArrayList<>();
+        this.piedras = new ArrayList<>();
         this.tiempoInvertido = 0;
         this.puntaje = 0;
-        inicializarFichas();
+        this.nextTurnNormal = false;
+
+        inicializarPiedras(boardSize, 0.25);
+    }
+    public void setNextTurnNormal(boolean value) {
+        nextTurnNormal = value;
     }
 
+    public boolean shouldPlaceNormalInNextTurn() {
+        return nextTurnNormal;
+    }
     public void setMove(int row, int col) {
         this.row = row;
         this.col = col;
     }
 
-    public List<Integer> getFichas() {
-        return fichas;
+    public ArrayList<Piedra> getPiedras() {
+        return piedras;
     }
 
     public long getTiempoInvertido() {
@@ -39,93 +49,124 @@ public abstract class Player {
         return puntaje;
     }
 
-    public void inicializarFichas() {
-        List<Integer> tiposPosibles = new ArrayList<>();
-        if (playerNumber == 1) {
-            Collections.addAll(tiposPosibles, 1, 3, 5);
-        } else if (playerNumber == 2) {
-            Collections.addAll(tiposPosibles, 2, 4, 6);
+    public void inicializarPiedras(int boardSize, double porcentajeEspeciales) {
+        int totalStones = boardSize * boardSize;
+        int cantidadEspeciales = (int) (totalStones * porcentajeEspeciales);
+
+        ArrayList<Piedra> tiposPosibles = new ArrayList<>();
+
+        // Add normal stones (PiedraNormal) based on the player number
+        for (int i = 0; i < totalStones - cantidadEspeciales; i++) {
+            tiposPosibles.add(new PiedraNormal(playerNumber));
         }
 
-        for (int i = 0; i < 50; i++) {
-            Collections.shuffle(tiposPosibles);
-            int tipo = tiposPosibles.get(0);
-            fichas.add(tipo);
+        // Distribuir aleatoriamente las piedras especiales entre PiedraTemporal y PiedraPesada
+        Random random = new Random();
+        int totalSpecialStones = cantidadEspeciales;
+
+        while (totalSpecialStones > 0) {
+            int randomType = random.nextInt(2); // 0 or 1
+            if (randomType == 0 && totalSpecialStones > 0) {
+                tiposPosibles.add(new PiedraPesada(playerNumber));
+                totalSpecialStones--;
+            } else if (totalSpecialStones > 0) {
+                tiposPosibles.add(new PiedraTemporal(playerNumber));
+                totalSpecialStones--;
+            }
         }
 
-        imprimirFichas();
+        // Shuffle the list to randomize stone selection
+        Collections.shuffle(tiposPosibles);
+
+        // Add stones to the player's collection
+        for (int i = 0; i < totalStones; i++) {
+            Piedra piedra = tiposPosibles.get(i);
+            piedras.add(piedra);
+        }
+
+        // Print the types of stones the player has after initialization
+//        imprimirPiedras();
+        System.out.println(contarFichasPorTipo());
     }
-    public void reiniciarFichas() {
-        fichas.clear();  // Limpiar la lista de fichas
-        inicializarFichas();  // Volver a inicializar las fichas
-    }
-//    public abstract int makeMove(Board board, int type);
 
-    public abstract boolean hasPieceOfType(int pieceType);
+    public HashMap<String, Integer> contarFichasPorTipo() {
+        // Inicializar el contador
+        HashMap<String, Integer> contadorFichas = new HashMap<>();
+        contadorFichas.put("Normal", 0);
+        contadorFichas.put("Pesada", 0);
+        contadorFichas.put("Temporal", 0);
 
-    public abstract void removePiece(int pieceType);
-
-    public List<Integer> contarFichas() {
-        List<Integer> contadorFichas = new ArrayList<>(Collections.nCopies(3, 0));
-
-        for (int ficha : fichas) {
-            if (ficha == 1 || ficha == 2) {  // Ficha normal
-                contadorFichas.set(0, contadorFichas.get(0) + 1);
-            } else if (ficha == 3 || ficha == 4) {  // Ficha pesada
-                contadorFichas.set(1, contadorFichas.get(1) + 1);
-            } else if (ficha == 5 || ficha == 6) {  // Ficha temporal
-                contadorFichas.set(2, contadorFichas.get(2) + 1);
+        // Contar las fichas por tipo
+        for (Piedra piedra : piedras) {
+            if (piedra instanceof PiedraNormal) {
+                contadorFichas.put("Normal", contadorFichas.get("Normal") + 1);
+            } else if (piedra instanceof PiedraPesada) {
+                contadorFichas.put("Pesada", contadorFichas.get("Pesada") + 1);
+            } else if (piedra instanceof PiedraTemporal) {
+                contadorFichas.put("Temporal", contadorFichas.get("Temporal") + 1);
             }
         }
         return contadorFichas;
     }
 
-    public int contarFichasNormales() {
-        int contadorFichasNormales = 0;
 
-        for (int ficha : fichas) {
-            if (ficha == 1 || ficha == 2) {  // Ficha normal
-                contadorFichasNormales++;
-            }
+    public Piedra sumarFichaAleatoria() {
+        Random random = new Random();
+        int randomType = random.nextInt(1); // 0, 1 o 2
+
+        Piedra nuevaPiedra = null;
+
+        switch (randomType) {
+            case 0:
+                nuevaPiedra = new PiedraNormal(playerNumber);
+                break;
+            case 1:
+                nuevaPiedra = new PiedraPesada(playerNumber);
+                break;
+            case 2:
+                nuevaPiedra = new PiedraTemporal(playerNumber);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + randomType);
         }
-
-        return contadorFichasNormales;
+        piedras.add(nuevaPiedra);
+        return nuevaPiedra;
     }
 
-    public int contarFichasPesadas() {
-        int contadorFichasPesadas = 0;
 
-        for (int ficha : fichas) {
-            if (ficha == 3 || ficha == 4) {  // Ficha pesada
-                contadorFichasPesadas++;
-            }
-        }
 
-        return contadorFichasPesadas;
+    public void reiniciarPiedras(int boardSize, double porcentajeEspeciales) {
+        piedras.clear();
+        inicializarPiedras(boardSize, porcentajeEspeciales);
     }
 
-    public int contarFichasTemporales() {
-        int contadorFichasTemporales = 0;
+//    public abstract int makeMove(Board board, int type);
 
-        for (int ficha : fichas) {
-            if (ficha == 5 || ficha == 6) {  // Ficha temporal
-                contadorFichasTemporales++;
-            }
-        }
+    public abstract boolean hasPieceOfType(Class<?> clasePiedra);
 
-        return contadorFichasTemporales;
-    }
+    public abstract void removePiece(Piedra piedraToRemove);
+
+
     public int getPlayerNumber() {
         return playerNumber;
     }
 
+    public Piedra ObtenerPiedra(Class<?> pieceType) {
+        for (Piedra piedra : piedras) {
+            if (pieceType.isInstance(piedra) && piedra.getClass().equals(pieceType)) {
+                return piedra;
+            }
+        }
+        return null;
+    }
 
+    public void imprimirPiedras() {
+        System.out.println("Piedras del Jugador " + playerNumber + ": ");
+        for (Piedra piedra : piedras) {
+            System.out.print(piedra.getTipoPiedra() + " ");
 
-    public void imprimirFichas() {
-        System.out.println("Fichas del Jugador " + playerNumber + ": ");
-        for (int ficha : fichas) {
-            System.out.print(ficha + " ");
         }
         System.out.println();
     }
+
 }

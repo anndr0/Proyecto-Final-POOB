@@ -1,5 +1,7 @@
 package presentation;
 
+import domain.Piedra;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -23,7 +25,7 @@ public class PieceClickListener extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
         if (!isClickInProgress) {
             isClickInProgress = true;
-            int selectedPieceType = gomokuGUI.getSelectedPieceType();
+            Piedra selectedPieceType = gomokuGUI.getSelectedPieceType();
             gomokuGUI.handlePieceClick(row, col, selectedPieceType);
         }
     }
